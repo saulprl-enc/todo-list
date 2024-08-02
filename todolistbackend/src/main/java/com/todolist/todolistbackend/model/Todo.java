@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 
 import java.util.Date;
 
-public class Todo {
+public class Todo implements Cloneable {
     private String id;
 
     @NotEmpty(message = "You must provide a title")
@@ -106,5 +106,10 @@ public class Todo {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

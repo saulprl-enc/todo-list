@@ -32,7 +32,9 @@ public class TodoRepository {
     }
 
     public Todo updateTodo(String id, Todo todo) {
-        return this.db.replace(id, todo);
+        this.db.replace(id, todo);
+
+        return todo;
     }
 
     public Todo deleteTodo(String id) {

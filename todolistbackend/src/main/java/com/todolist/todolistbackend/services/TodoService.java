@@ -33,10 +33,8 @@ public class TodoService {
         return createdTodo;
     }
 
-    public Todo updateTodo(String id, Todo data) {
-        Todo existingTodo = this.repo.findTodo(id);
-
-        return null;
+    public Todo updateTodo(Todo updatedTodo) {
+        return this.repo.updateTodo(updatedTodo.getId(), updatedTodo);
     }
 
     public Todo markAsDone(String id) {

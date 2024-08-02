@@ -59,18 +59,21 @@ public class TodosController {
 
     @PutMapping("/{id}")
     public TodoDto updateTodo(@RequestBody TodoDto data, @PathVariable String id) {
-        Todo existingTodo = todoService.getTodo(id);
+        try {
+            Todo existingTodo = (Todo) (todoService.getTodo(id).clone());
 
-        if (existingTodo == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No ToDo with provided ID found");
+            if (existingTodo == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No ToDo with provided ID found");
+            }
+
+            todoMapper.updateTodoFromDto(data, existingTodo);
+
+            Todo updatedTodo = todoService.updateTodo(existingTodo);
+
+            return todoMapper.convertToDto(updatedTodo);
+        } catch (CloneNotSupportedException ex) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "The server was unable to update the todo");
         }
-
-        todoMapper.updateTodoFromDto(data, existingTodo);
-
-        TodoDto updatedTodo = todoMapper.convertToDto(existingTodo);
-
-        System.out.println(updatedTodo.toString());
-        return updatedTodo;
     }
 
     @DeleteMapping("/{id}")
