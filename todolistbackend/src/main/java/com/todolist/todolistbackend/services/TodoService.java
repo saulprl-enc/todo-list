@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class TodoService {
@@ -15,18 +17,25 @@ public class TodoService {
     private TodoRepository repo;
 
     public Collection<Todo> getTodos() {
-        return List.of();
+        return this.repo.findTodos();
     }
 
     public Todo getTodo(String id) {
-        return null;
+        return this.repo.findTodo(id);
     }
 
     public Todo createTodo(Todo todo) {
-        return null;
+        todo.setId(UUID.randomUUID().toString());
+        todo.setCreatedAt(new Date());
+
+        Todo createdTodo = this.repo.saveTodo(todo);
+
+        return createdTodo;
     }
 
     public Todo updateTodo(String id, Todo data) {
+        Todo existingTodo = this.repo.findTodo(id);
+
         return null;
     }
 

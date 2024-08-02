@@ -15,6 +15,12 @@ public class TodoRepository {
         this.db = new HashMap<>();
     }
 
+    public Todo saveTodo(Todo todo) {
+        this.db.put(todo.getId(), todo);
+
+        return todo;
+    }
+
     public Collection<Todo> findTodos() {
         return this.db.values();
     }
