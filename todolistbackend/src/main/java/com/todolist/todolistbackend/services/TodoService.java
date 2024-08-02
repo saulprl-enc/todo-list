@@ -1,21 +1,40 @@
 package com.todolist.todolistbackend.services;
 
-import com.todolist.todolistbackend.dto.Todo;
+import com.todolist.todolistbackend.model.Todo;
+import com.todolist.todolistbackend.repositories.TodoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
 
-public interface TodoService {
-    public abstract Collection<Todo> getTodos();
+@Service
+public class TodoServiceImpl {
 
-    public abstract Todo getTodo(String id);
+    @Autowired
+    private TodoRepository repo;
 
-    public abstract Todo createTodo(Todo todo);
+    public Collection<Todo> getTodos() {
+        return List.of();
+    }
 
-    public abstract Todo updateTodo(String id, Todo data);
+    public Todo getTodo(String id) {
+        return null;
+    }
 
-    public abstract Todo markAsDone(String id);
+    public Todo createTodo(Todo todo) {
+        return null;
+    }
 
-    public abstract Todo undoTodo(String id);
+    public Todo updateTodo(String id, Todo data) {
+        return null;
+    }
+
+    public Todo markAsDone(String id) {
+        return null;
+    }
+
+    public Todo undoTodo(String id) {
+        return null;
+    }
 }
-
