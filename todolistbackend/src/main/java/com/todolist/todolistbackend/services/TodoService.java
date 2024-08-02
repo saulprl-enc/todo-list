@@ -48,6 +48,8 @@ public class TodoService {
 
         todo.setDone(true);
         todo.setCompletedAt(new Date());
+
+        this.repo.updateTodo(todo.getId(), todo);
     }
 
     public void undoTodo(Todo todo) {
@@ -57,5 +59,7 @@ public class TodoService {
 
         todo.setDone(false);
         todo.setCompletedAt(null);
+
+        this.repo.updateTodo(todo.getId(), todo);
     }
 }

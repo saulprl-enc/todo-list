@@ -56,28 +56,36 @@ public class TodosController {
 
     @PostMapping("/{id}/done")
     public TodoDto completeTodo(@PathVariable String id) {
-        Todo existingTodo = todoService.getTodo(id);
+        try {
+            Todo existingTodo = (Todo) todoService.getTodo(id).clone();
 
-        if (existingTodo == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No ToDo with the provided ID was found");
+            if (existingTodo == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No ToDo with the provided ID was found");
+            }
+
+            todoService.markAsDone(existingTodo);
+
+            return todoMapper.convertToDto(existingTodo);
+        } catch (CloneNotSupportedException ex) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "The server was unable to update this ToDo");
         }
-
-        todoService.markAsDone(existingTodo);
-
-        return todoMapper.convertToDto(existingTodo);
     }
 
     @PutMapping("/{id}/undone")
     public TodoDto undoTodo(@PathVariable String id) {
-        Todo existingTodo = todoService.getTodo(id);
+        try {
+            Todo existingTodo = (Todo) todoService.getTodo(id).clone();
 
-        if (existingTodo == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No ToDo with the provided ID was found");
+            if (existingTodo == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No ToDo with the provided ID was found");
+            }
+
+            todoService.undoTodo(existingTodo);
+
+            return todoMapper.convertToDto(existingTodo);
+        } catch (CloneNotSupportedException ex) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "The server was unable to update this ToDo");
         }
-
-        todoService.undoTodo(existingTodo);
-
-        return todoMapper.convertToDto(existingTodo);
     }
 
     @PutMapping("/{id}")
