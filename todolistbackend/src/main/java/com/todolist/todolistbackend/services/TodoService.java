@@ -41,11 +41,21 @@ public class TodoService {
         return this.repo.deleteTodo(id);
     }
 
-    public Todo markAsDone(String id) {
-        return null;
+    public void markAsDone(Todo todo) {
+        if (todo.isDone()) {
+            return;
+        }
+
+        todo.setDone(true);
+        todo.setCompletedAt(new Date());
     }
 
-    public Todo undoTodo(String id) {
-        return null;
+    public void undoTodo(Todo todo) {
+        if (!todo.isDone()) {
+            return;
+        }
+
+        todo.setDone(false);
+        todo.setCompletedAt(null);
     }
 }

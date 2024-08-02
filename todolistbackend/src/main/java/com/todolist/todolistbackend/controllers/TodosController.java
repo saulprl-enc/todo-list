@@ -43,9 +43,6 @@ public class TodosController {
 
     @PostMapping
     public TodoDto createTodo(@RequestBody @Valid TodoDto todoDto) {
-//        todo.setId(UUID.randomUUID().toString());
-//        todo.setCreatedAt(new Date());
-//        todoService.createTodo(todo);
         try {
             Todo todo = todoMapper.convertToEntity(todoDto);
 
@@ -55,6 +52,32 @@ public class TodosController {
         } catch (ParseException ex) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "The server was not able to parse the incoming data.");
         }
+    }
+
+    @PostMapping("/{id}/done")
+    public TodoDto completeTodo(@PathVariable String id) {
+        Todo existingTodo = todoService.getTodo(id);
+
+        if (existingTodo == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No ToDo with the provided ID was found");
+        }
+
+        todoService.markAsDone(existingTodo);
+
+        return todoMapper.convertToDto(existingTodo);
+    }
+
+    @PutMapping("/{id}/undone")
+    public TodoDto undoTodo(@PathVariable String id) {
+        Todo existingTodo = todoService.getTodo(id);
+
+        if (existingTodo == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No ToDo with the provided ID was found");
+        }
+
+        todoService.undoTodo(existingTodo);
+
+        return todoMapper.convertToDto(existingTodo);
     }
 
     @PutMapping("/{id}")
