@@ -4,6 +4,7 @@ import com.todolist.todolistbackend.enums.TodoPriority;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.util.Date;
 
@@ -11,11 +12,11 @@ public class Todo {
     private String id;
 
     @NotEmpty(message = "You must provide a title")
-    @Max(value = 120, message = "The title must not be longer than 120 characters")
+    @Size(min = 3, max = 120, message = "The title's length must be between 3 and 120 characters")
     private String title;
     private Date due;
     private boolean done = false;
-    private Date completed;
+    private Date completedAt;
 
     @NotNull(message = "You must provide a ToDo priority level")
     private TodoPriority priority;
@@ -24,12 +25,12 @@ public class Todo {
     public Todo() {
     }
 
-    public Todo(String id, String title, Date due, boolean done, Date completed, TodoPriority priority, Date createdAt) {
+    public Todo(String id, String title, Date due, boolean done, Date completedAt, TodoPriority priority, Date createdAt) {
         this.id = id;
         this.title = title;
         this.due = due;
         this.done = done;
-        this.completed = completed;
+        this.completedAt = completedAt;
         this.priority = priority;
         this.createdAt = createdAt;
     }
@@ -83,12 +84,12 @@ public class Todo {
         this.done = done;
     }
 
-    public Date getCompleted() {
-        return completed;
+    public Date getCompletedAt() {
+        return completedAt;
     }
 
-    public void setCompleted(Date completed) {
-        this.completed = completed;
+    public void setCompletedAt(Date completedAt) {
+        this.completedAt = completedAt;
     }
 
     public TodoPriority getPriority() {
