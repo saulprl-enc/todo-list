@@ -77,12 +77,14 @@ public class TodosController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteTodo(@PathVariable String id) {
-//        Todo deletedTodo = todoService.remove(id);
+    public TodoDto deleteTodo(@PathVariable String id) {
+        Todo deletedTodo = todoService.deleteTodo(id);
 
-//        if (deletedTodo == null) {
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-//        }
+        if (deletedTodo == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        return todoMapper.convertToDto(deletedTodo);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

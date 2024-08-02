@@ -37,6 +37,10 @@ public class TodoService {
         return this.repo.updateTodo(updatedTodo.getId(), updatedTodo);
     }
 
+    public Todo deleteTodo(String id) {
+        return this.repo.deleteTodo(id);
+    }
+
     public Todo markAsDone(String id) {
         return null;
     }
