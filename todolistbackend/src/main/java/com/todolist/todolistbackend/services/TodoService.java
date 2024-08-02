@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Service
-public class TodoServiceImpl {
+public class TodoService {
 
     @Autowired
     private TodoRepository repo;

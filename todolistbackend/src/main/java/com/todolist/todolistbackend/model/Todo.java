@@ -1,4 +1,4 @@
-package com.todolist.todolistbackend.dto;
+package com.todolist.todolistbackend.model;
 
 import com.todolist.todolistbackend.enums.TodoPriority;
 import jakarta.validation.constraints.Max;

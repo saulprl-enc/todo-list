@@ -1,6 +1,6 @@
 package com.todolist.todolistbackend.repositories;
 
-import com.todolist.todolistbackend.dto.Todo;
+import com.todolist.todolistbackend.model.Todo;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
@@ -15,7 +15,7 @@ public class TodoRepository {
         this.db = new HashMap<>();
     }
 
-    public Collection<Todo> findStudents() {
+    public Collection<Todo> findTodos() {
         return this.db.values();
     }
 

@@ -1,8 +1,9 @@
 package com.todolist.todolistbackend.controllers;
 
-import com.todolist.todolistbackend.dto.Todo;
-import com.todolist.todolistbackend.enums.TodoPriority;
+import com.todolist.todolistbackend.model.Todo;
+import com.todolist.todolistbackend.services.TodoService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -14,9 +15,8 @@ import java.util.*;
 @RestController
 @RequestMapping("/todos")
 public class TodosController {
-    private Map<String, Todo> todos = new HashMap<>() {{
-        put("1", new Todo("1", "Finish TodoList", TodoPriority.HIGH));
-    }};
+    @Autowired
+    private TodoService todoService;
 
     @GetMapping
     public Collection<Todo> getTodos() {
