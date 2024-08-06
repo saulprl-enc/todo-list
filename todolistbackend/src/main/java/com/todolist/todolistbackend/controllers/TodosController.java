@@ -4,6 +4,7 @@ import com.todolist.todolistbackend.dto.TodoDto;
 import com.todolist.todolistbackend.mapper.TodoMapper;
 import com.todolist.todolistbackend.model.Todo;
 import com.todolist.todolistbackend.services.TodoService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,9 +25,20 @@ public class TodosController {
     @Autowired
     private TodoMapper todoMapper;
 
-    @GetMapping
-    public Collection<TodoDto> getTodos() {
-        Collection<Todo> todos = todoService.getTodos();
+    @GetMapping()
+    public List<TodoDto> getTodos(@RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size, HttpServletResponse response) {
+        if (page == null) {
+            page = 0;
+        } else if (page > 0) {
+            page -= 1;
+        }
+
+        if (size == null) {
+            size = 10;
+        }
+
+        List<Todo> todos = todoService.getTodos(page, size);
+
         return todoMapper.todosListToDto(todos);
     }
 

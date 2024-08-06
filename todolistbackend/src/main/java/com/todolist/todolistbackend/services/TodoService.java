@@ -20,6 +20,10 @@ public class TodoService {
         return this.repo.findTodos();
     }
 
+    public List<Todo> getTodos(int page, int size) {
+        return this.repo.findTodos(page, size);
+    }
+
     public Todo getTodo(String id) {
         return this.repo.findTodo(id);
     }

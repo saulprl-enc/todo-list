@@ -8,14 +8,14 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import java.text.ParseException;
-import java.util.Collection;
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface TodoMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateTodoFromDto(TodoDto dto, @MappingTarget Todo entity);
 
-    Collection<TodoDto> todosListToDto(Collection<Todo> todos);
+    List<TodoDto> todosListToDto(List<Todo> todos);
 
     TodoDto convertToDto(Todo todo);
 
