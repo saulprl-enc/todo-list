@@ -2,7 +2,9 @@ package com.todolist.todolistbackend.repositories;
 
 import com.todolist.todolistbackend.enums.TodoPriority;
 import com.todolist.todolistbackend.model.Todo;
+import com.todolist.todolistbackend.web.PaginatedData;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.*;
 
@@ -36,13 +38,33 @@ public class TodoRepository {
         return this.db.values();
     }
 
-    public List<Todo> findTodos(int page, int size) {
+    public PaginatedData<Todo> findTodos(int page, int size) {
         long offsetStart = page * size;
         long offsetEnd = offsetStart + size;
+        int totalPages = Math.ceilDiv(this.db.size(), size);
 
         List<Todo> paginatedTodos = offsetStart == 0 ? this.db.values().stream().limit(offsetEnd).toList() : this.db.values().stream().skip(offsetStart).limit(offsetEnd).toList();
 
-        return paginatedTodos;
+        PaginatedData<Todo> paginatedResponse = new PaginatedData<>(page + 1, totalPages, size, paginatedTodos);
+
+        ServletUriComponentsBuilder builder = ServletUriComponentsBuilder.fromCurrentRequest();
+        builder.replaceQueryParam("size", size);
+
+        if (page > 0) {
+            builder.replaceQueryParam("page", page);
+            String uri = builder.build().toUriString();
+
+            paginatedResponse.setPreviousPage(uri);
+        }
+
+        if (page + 1 < totalPages) {
+            builder.replaceQueryParam("page", page + 2);
+            String uri = builder.build().toUriString();
+
+            paginatedResponse.setNextPage(uri);
+        }
+
+        return paginatedResponse;
     }
 
     public Todo findTodo(String id) {

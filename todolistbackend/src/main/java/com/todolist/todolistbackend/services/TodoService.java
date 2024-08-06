@@ -2,12 +2,12 @@ package com.todolist.todolistbackend.services;
 
 import com.todolist.todolistbackend.model.Todo;
 import com.todolist.todolistbackend.repositories.TodoRepository;
+import com.todolist.todolistbackend.web.PaginatedData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -20,7 +20,7 @@ public class TodoService {
         return this.repo.findTodos();
     }
 
-    public List<Todo> getTodos(int page, int size) {
+    public PaginatedData<Todo> getTodos(int page, int size) {
         return this.repo.findTodos(page, size);
     }
 
