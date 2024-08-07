@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 @Repository
 public class TodoRepository {
@@ -38,12 +39,42 @@ public class TodoRepository {
         return this.db.values();
     }
 
-    public PaginatedData<Todo> findTodos(int page, int size) {
+    public PaginatedData<Todo> findTodos(int page, int size, String title, String sortByPriority, String sortByDate, String status, TodoPriority priority) {
+        Stream<Todo> todoStream = this.db.values().stream();
+
+        if (title != null && !title.isEmpty()) {
+            todoStream = todoStream.filter(todo -> todo.getTitle().toLowerCase().contains(title.toLowerCase()));
+        }
+
+//        if (sortByPriority != null && !sortByPriority.isEmpty() && !sortByPriority.isBlank()) {
+//            boolean ascending = sortByPriority == "asc";
+//
+//            todoStream = todoStream.sorted((a, b) -> {
+//                if (ascending) {
+//
+//                }
+//            });
+//        }
+
+        if (status != null && !status.isEmpty()) {
+            if (!status.contains("all")) {
+                todoStream = todoStream.filter(todo -> {
+                    if (todo.isDone()) {
+                        return status.contains("completed");
+                    }
+
+                    return status.contains("pending");
+                });
+            }
+        }
+
+        List<Todo> todosList = todoStream.toList();
+
         long offsetStart = page * size;
         long offsetEnd = offsetStart + size;
-        int totalPages = Math.ceilDiv(this.db.size(), size);
+        int totalPages = (int) Math.ceil(todosList.size() / size);
 
-        List<Todo> paginatedTodos = offsetStart == 0 ? this.db.values().stream().limit(offsetEnd).toList() : this.db.values().stream().skip(offsetStart).limit(offsetEnd).toList();
+        List<Todo> paginatedTodos = offsetStart == 0 ? todosList.stream().limit(offsetEnd).toList() : this.db.values().stream().skip(offsetStart).limit(offsetEnd).toList();
 
         PaginatedData<Todo> paginatedResponse = new PaginatedData<>(page + 1, totalPages, size, paginatedTodos);
 

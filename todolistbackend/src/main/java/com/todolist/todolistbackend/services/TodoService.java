@@ -1,5 +1,6 @@
 package com.todolist.todolistbackend.services;
 
+import com.todolist.todolistbackend.enums.TodoPriority;
 import com.todolist.todolistbackend.model.Todo;
 import com.todolist.todolistbackend.repositories.TodoRepository;
 import com.todolist.todolistbackend.web.PaginatedData;
@@ -20,8 +21,8 @@ public class TodoService {
         return this.repo.findTodos();
     }
 
-    public PaginatedData<Todo> getTodos(int page, int size) {
-        return this.repo.findTodos(page, size);
+    public PaginatedData<Todo> getTodos(int page, int size, String title, String sortByPriority, String sortByDate, String status, TodoPriority priority) {
+        return this.repo.findTodos(page, size, title, sortByPriority, sortByDate, status, priority);
     }
 
     public Todo getTodo(String id) {

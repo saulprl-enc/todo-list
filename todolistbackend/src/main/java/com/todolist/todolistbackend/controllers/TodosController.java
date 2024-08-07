@@ -1,6 +1,7 @@
 package com.todolist.todolistbackend.controllers;
 
 import com.todolist.todolistbackend.dto.TodoDto;
+import com.todolist.todolistbackend.enums.TodoPriority;
 import com.todolist.todolistbackend.mapper.TodoMapper;
 import com.todolist.todolistbackend.model.Todo;
 import com.todolist.todolistbackend.services.TodoService;
@@ -27,7 +28,7 @@ public class TodosController {
     private TodoMapper todoMapper;
 
     @GetMapping()
-    public PaginatedData<TodoDto> getTodos(@RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size, HttpServletResponse response) {
+    public PaginatedData<TodoDto> getTodos(@RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size, @RequestParam(required = false) String title, @RequestParam(required = false) String sortByPriority, @RequestParam(required = false) String sortByDate, @RequestParam(required = false) String status, @RequestParam(required = false) TodoPriority priority) {
         if (page == null) {
             page = 0;
         } else if (page > 0) {
@@ -38,7 +39,8 @@ public class TodosController {
             size = 10;
         }
 
-        PaginatedData<Todo> paginatedData = todoService.getTodos(page, size);
+
+        PaginatedData<Todo> paginatedData = todoService.getTodos(page, size, title, sortByPriority, sortByDate, status, priority);
         PaginatedData<TodoDto> dtoPaginatedData = new PaginatedData<>(paginatedData.getCurrentPage(), paginatedData.getTotalPages(), paginatedData.getSize(), todoMapper.todosListToDto(paginatedData.getData()), paginatedData.getNextPage(), paginatedData.getPreviousPage());
 
         return dtoPaginatedData;
