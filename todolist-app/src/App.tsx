@@ -1,5 +1,6 @@
 import { CreateTodoButton } from "./components/todos/create-todo/create-todo-button";
 import { TodoFilters } from "./components/todos/todo-filters/todo-filters";
+import { TodoPagination } from "./components/todos/todo-pagination/todo-pagination";
 import { TodoStats } from "./components/todos/todo-stats/todo-stats";
 import { TodoTable } from "./components/todos/todo-table/todo-table";
 
@@ -10,6 +11,7 @@ function App() {
         <TodoFilters />
         <CreateTodoButton />
         <TodoTable />
+        <TodoPagination />
         <TodoStats />
       </main>
     </div>
