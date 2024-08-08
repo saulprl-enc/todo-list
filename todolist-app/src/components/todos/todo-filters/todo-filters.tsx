@@ -76,6 +76,27 @@ export const TodoFilters = () => {
     return displayValue;
   };
 
+  const buildStatusDisplayValue = (value: TodoFiltersForm["status"]) => {
+    if (!value.completed && !value.pending) {
+      form.setValue("status.completed", true);
+      form.setValue("status.pending", true);
+
+      return;
+    }
+
+    const selectedStatuses: Array<string> = [];
+
+    if (value.completed) selectedStatuses.push("Done");
+    if (value.pending) selectedStatuses.push("Pending");
+
+    const displayValue =
+      selectedStatuses.length === 2
+        ? `All, ${selectedStatuses.join(", ")}`
+        : selectedStatuses.join(", ");
+
+    return displayValue;
+  };
+
   const onSubmit = (data: TodoFiltersForm) => {
     console.log(data);
   };
@@ -92,7 +113,7 @@ export const TodoFilters = () => {
           render={({ field }) => (
             <FormItem>
               <div className="flex items-center gap-2">
-                <FormLabel>Name</FormLabel>
+                <FormLabel className="min-w-14">Name</FormLabel>
                 <FormControl>
                   <Input placeholder="Do the dishes" {...field} />
                 </FormControl>
@@ -107,7 +128,7 @@ export const TodoFilters = () => {
           render={({ field }) => (
             <FormItem>
               <div className="flex items-center gap-2">
-                <FormLabel>Priority</FormLabel>
+                <FormLabel className="min-w-14">Priority</FormLabel>
                 <FormControl>
                   <Popover>
                     <PopoverTrigger className="rounded-sm border-2 border-primary p-1">
@@ -166,7 +187,59 @@ export const TodoFilters = () => {
             </FormItem>
           )}
         />
-        <Button type="submit">Search</Button>
+        <div className="flex w-full items-center justify-between">
+          <FormField
+            control={form.control}
+            name="status"
+            render={({ field }) => (
+              <FormItem>
+                <div className="flex items-center gap-2">
+                  <FormLabel className="min-w-14">Status</FormLabel>
+                  <FormControl>
+                    <Popover>
+                      <PopoverTrigger className="rounded-sm border-2 border-primary p-1">
+                        {buildStatusDisplayValue(field.value)}
+                      </PopoverTrigger>
+                      <PopoverContent className="flex w-fit flex-col gap-2">
+                        <FormField
+                          control={form.control}
+                          name="status.completed"
+                          render={({ field }) => (
+                            <FormItem className="flex items-center gap-2 space-y-0">
+                              <FormControl>
+                                <Checkbox
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                              <FormLabel>Done</FormLabel>
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="status.pending"
+                          render={({ field }) => (
+                            <FormItem className="flex items-center gap-2 space-y-0">
+                              <FormControl>
+                                <Checkbox
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                              <FormLabel>Pending</FormLabel>
+                            </FormItem>
+                          )}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </FormControl>
+                </div>
+              </FormItem>
+            )}
+          />
+          <Button type="submit">Search</Button>
+        </div>
       </form>
     </Form>
   );
