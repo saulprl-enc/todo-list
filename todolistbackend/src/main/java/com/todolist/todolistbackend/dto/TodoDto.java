@@ -5,12 +5,12 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public record TodoDto(String id,
                       @NotEmpty(message = "You must provide a title") @Size(min = 3, max = 120, message = "The title's length must be between 3 and 120 characters") String title,
-                      Date due, boolean done,
-                      Date completedAt,
+                      LocalDateTime due, boolean done,
+                      LocalDateTime completedAt,
                       @NotNull(message = "You must provide a ToDo priority level") TodoPriority priority,
-                      Date createdAt) {
+                      LocalDateTime createdAt) {
 }

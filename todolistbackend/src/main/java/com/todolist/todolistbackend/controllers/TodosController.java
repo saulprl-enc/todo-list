@@ -41,7 +41,7 @@ public class TodosController {
 
 
         PaginatedData<Todo> paginatedData = todoService.getTodos(page, size, title, sortByPriority, sortByDate, status, priority);
-        PaginatedData<TodoDto> dtoPaginatedData = new PaginatedData<>(paginatedData.getCurrentPage(), paginatedData.getTotalPages(), paginatedData.getSize(), todoMapper.todosListToDto(paginatedData.getData()), paginatedData.getNextPage(), paginatedData.getPreviousPage());
+        PaginatedData<TodoDto> dtoPaginatedData = new PaginatedData<>(paginatedData.getCurrentPage(), paginatedData.getTotalPages(), paginatedData.getTotalItems(), paginatedData.getSize(), todoMapper.todosListToDto(paginatedData.getData()), paginatedData.getNextPage(), paginatedData.getPreviousPage());
 
         return dtoPaginatedData;
     }

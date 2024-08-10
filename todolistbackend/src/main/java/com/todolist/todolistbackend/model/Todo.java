@@ -1,12 +1,12 @@
 package com.todolist.todolistbackend.model;
 
 import com.todolist.todolistbackend.enums.TodoPriority;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Todo implements Cloneable {
     private String id;
@@ -14,18 +14,18 @@ public class Todo implements Cloneable {
     @NotEmpty(message = "You must provide a title")
     @Size(min = 3, max = 120, message = "The title's length must be between 3 and 120 characters")
     private String title;
-    private Date due;
+    private LocalDateTime due;
     private boolean done = false;
-    private Date completedAt;
+    private LocalDateTime completedAt;
 
     @NotNull(message = "You must provide a ToDo priority level")
     private TodoPriority priority;
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     public Todo() {
     }
 
-    public Todo(String id, String title, Date due, boolean done, Date completedAt, TodoPriority priority, Date createdAt) {
+    public Todo(String id, String title, LocalDateTime due, boolean done, LocalDateTime completedAt, TodoPriority priority, LocalDateTime createdAt) {
         this.id = id;
         this.title = title;
         this.due = due;
@@ -40,7 +40,7 @@ public class Todo implements Cloneable {
         this.priority = priority;
     }
 
-    public Todo(String title, Date due, TodoPriority priority) {
+    public Todo(String title, LocalDateTime due, TodoPriority priority) {
         this.title = title;
         this.due = due;
         this.priority = priority;
@@ -50,6 +50,21 @@ public class Todo implements Cloneable {
         this.id = id;
         this.title = title;
         this.priority = priority;
+    }
+
+    public Todo(String id, String title, TodoPriority priority, LocalDateTime createdAt) {
+        this.id = id;
+        this.title = title;
+        this.priority = priority;
+        this.createdAt = createdAt;
+    }
+
+    public Todo(String id, String title, TodoPriority priority, LocalDateTime dueDate, LocalDateTime createdAt) {
+        this.id = id;
+        this.title = title;
+        this.priority = priority;
+        this.due = dueDate;
+        this.createdAt = createdAt;
     }
 
     public String getId() {
@@ -68,14 +83,6 @@ public class Todo implements Cloneable {
         this.title = title;
     }
 
-    public Date getDue() {
-        return due;
-    }
-
-    public void setDue(Date due) {
-        this.due = due;
-    }
-
     public boolean isDone() {
         return done;
     }
@@ -84,27 +91,39 @@ public class Todo implements Cloneable {
         this.done = done;
     }
 
-    public Date getCompletedAt() {
-        return completedAt;
-    }
-
-    public void setCompletedAt(Date completedAt) {
-        this.completedAt = completedAt;
-    }
-
     public TodoPriority getPriority() {
         return priority;
+    }
+
+    public int getPriorityOrdinal() {
+        return priority.ordinal();
     }
 
     public void setPriority(TodoPriority priority) {
         this.priority = priority;
     }
 
-    public Date getCreatedAt() {
+    public LocalDateTime getDue() {
+        return due;
+    }
+
+    public void setDue(LocalDateTime due) {
+        this.due = due;
+    }
+
+    public LocalDateTime getCompletedAt() {
+        return completedAt;
+    }
+
+    public void setCompletedAt(LocalDateTime completedAt) {
+        this.completedAt = completedAt;
+    }
+
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 

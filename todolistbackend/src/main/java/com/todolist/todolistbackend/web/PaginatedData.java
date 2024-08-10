@@ -5,6 +5,7 @@ import java.util.List;
 public class PaginatedData<T> {
     private int currentPage;
     private int totalPages;
+    private int totalItems;
     private int size;
     private List<T> data;
     private String nextPage;
@@ -13,6 +14,14 @@ public class PaginatedData<T> {
     public PaginatedData(int currentPage, int totalPages, int size, List<T> data) {
         this.currentPage = currentPage;
         this.totalPages = totalPages;
+        this.size = size;
+        this.data = data;
+    }
+
+    public PaginatedData(int currentPage, int totalPages, int totalItems, int size, List<T> data) {
+        this.currentPage = currentPage;
+        this.totalPages = totalPages;
+        this.totalItems = totalItems;
         this.size = size;
         this.data = data;
     }
@@ -39,6 +48,24 @@ public class PaginatedData<T> {
         this.data = data;
         this.nextPage = nextPage;
         this.previousPage = previousPage;
+    }
+
+    public PaginatedData(int currentPage, int totalPages, int totalItems, int size, List<T> data, String nextPage, String previousPage) {
+        this.currentPage = currentPage;
+        this.totalPages = totalPages;
+        this.totalItems = totalItems;
+        this.size = size;
+        this.data = data;
+        this.nextPage = nextPage;
+        this.previousPage = previousPage;
+    }
+
+    public int getTotalItems() {
+        return totalItems;
+    }
+
+    public void setTotalItems(int totalItems) {
+        this.totalItems = totalItems;
     }
 
     public int getCurrentPage() {

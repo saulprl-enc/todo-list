@@ -7,8 +7,8 @@ import com.todolist.todolistbackend.web.PaginatedData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
 import java.util.UUID;
 
 @Service
@@ -31,7 +31,7 @@ public class TodoService {
 
     public Todo createTodo(Todo todo) {
         todo.setId(UUID.randomUUID().toString());
-        todo.setCreatedAt(new Date());
+        todo.setCreatedAt(LocalDateTime.now());
 
         Todo createdTodo = this.repo.saveTodo(todo);
 
@@ -52,7 +52,7 @@ public class TodoService {
         }
 
         todo.setDone(true);
-        todo.setCompletedAt(new Date());
+        todo.setCompletedAt(LocalDateTime.now());
 
         this.repo.updateTodo(todo.getId(), todo);
     }

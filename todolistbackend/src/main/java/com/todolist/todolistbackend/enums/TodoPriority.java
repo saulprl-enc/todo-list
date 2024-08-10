@@ -1,7 +1,7 @@
 package com.todolist.todolistbackend.enums;
 
 public enum TodoPriority {
-    HIGH,
+    LOW,
     MEDIUM,
-    LOW
+    HIGH,
 }
