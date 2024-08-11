@@ -28,7 +28,7 @@ public class TodoRepository {
             put("8", new Todo("8", "Make the bed", TodoPriority.HIGH, LocalDateTime.of(2024, Month.AUGUST, 6, 5, 0), LocalDateTime.now()));
             put("9", new Todo("9", "Dust off desk", TodoPriority.LOW, LocalDateTime.of(2024, Month.AUGUST, 12, 6, 0), LocalDateTime.now()));
             put("10", new Todo("10", "Update LinkedIn", TodoPriority.LOW, LocalDateTime.of(2024, Month.SEPTEMBER, 12, 12, 0), LocalDateTime.now()));
-            put("11", new Todo("11", "Clean the kitchen", TodoPriority.MEDIUM, LocalDateTime.of(2024, Month.AUGUST, 16, 12, 0), LocalDateTime.now()));
+            put("11", new Todo("11", "Clean the kitchen", TodoPriority.MEDIUM, LocalDateTime.now()));
         }};
     }
 
@@ -48,10 +48,9 @@ public class TodoRepository {
 
         int totalItems = todosList.size();
         long offsetStart = (long) page * size;
-        long offsetEnd = offsetStart + size;
         int totalPages = (int) Math.ceil((double) totalItems / size);
 
-        List<Todo> paginatedTodos = offsetStart == 0 ? todosList.stream().limit(offsetEnd).toList() : this.db.values().stream().skip(offsetStart).limit(offsetEnd).toList();
+        List<Todo> paginatedTodos = todosList.stream().skip(offsetStart).limit(size).toList();
 
         PaginatedData<Todo> paginatedResponse = new PaginatedData<>(page + 1, totalPages, totalItems, size, paginatedTodos);
 
@@ -117,18 +116,18 @@ public class TodoRepository {
 
     private void sortTodos(ArrayList<Todo> todos, @Nullable String sortByPriority, @Nullable String sortByDueDate) {
         Comparator priorityComparator = Comparator.comparingInt(Todo::getPriorityOrdinal);
-        Comparator dueDateComparator = Comparator.comparing(Todo::getDue);
+        Comparator dueDateComparator = Comparator.comparing(Todo::getDue, Comparator.nullsFirst(Comparator.naturalOrder()));
         Comparator createdAtComparator = Comparator.comparing(Todo::getCreatedAt).reversed();
 
         Comparator comparator = createdAtComparator;
 
         if (sortByPriority != null && sortByDueDate != null) {
             comparator = buildConditionalComparator(sortByPriority, priorityComparator);
-            comparator = comparator.thenComparing(buildConditionalComparator(sortByDueDate, dueDateComparator));
+            comparator = Comparator.nullsFirst(comparator.thenComparing(buildConditionalComparator(sortByDueDate, dueDateComparator)));
         } else if (sortByPriority != null) {
             comparator = buildConditionalComparator(sortByPriority, priorityComparator);
         } else if (sortByDueDate != null) {
-            comparator = buildConditionalComparator(sortByDueDate, dueDateComparator);
+            comparator = Comparator.nullsFirst(buildConditionalComparator(sortByDueDate, dueDateComparator));
         }
 
         comparator = comparator.thenComparing(createdAtComparator);
