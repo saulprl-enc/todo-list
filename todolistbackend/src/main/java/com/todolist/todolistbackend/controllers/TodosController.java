@@ -28,7 +28,7 @@ public class TodosController {
     private TodoMapper todoMapper;
 
     @GetMapping()
-    public PaginatedData<TodoDto> getTodos(@RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size, @RequestParam(required = false) String title, @RequestParam(required = false) String sortByPriority, @RequestParam(required = false) String sortByDate, @RequestParam(required = false) String status, @RequestParam(required = false) TodoPriority priority) {
+    public PaginatedData<TodoDto> getTodos(@RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size, @RequestParam(required = false) String title, @RequestParam(required = false) String sortByPriority, @RequestParam(required = false) String sortByDate, @RequestParam(required = false) String status, @RequestParam(required = false) String priority) {
         if (page == null) {
             page = 0;
         } else if (page > 0) {

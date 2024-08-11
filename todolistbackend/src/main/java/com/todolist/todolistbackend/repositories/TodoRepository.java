@@ -42,8 +42,8 @@ public class TodoRepository {
         return this.db.values();
     }
 
-    public PaginatedData<Todo> findTodos(int page, int size, String title, String sortByPriority, String sortByDate, String status, TodoPriority priority) {
-        ArrayList<Todo> todosList = getTodoList(title, status);
+    public PaginatedData<Todo> findTodos(int page, int size, String title, String sortByPriority, String sortByDate, String status, String priority) {
+        ArrayList<Todo> todosList = getTodoList(title, status, priority);
         sortTodos(todosList, sortByPriority, sortByDate);
 
         int totalItems = todosList.size();
@@ -78,22 +78,36 @@ public class TodoRepository {
         Stream<Todo> todoStream = this.db.values().stream();
 
         if (title != null && !title.isEmpty()) {
-            todoStream = todoStream.filter(todo -> todo.getTitle().toLowerCase().contains(title.toLowerCase()));
+            String normalizedTitle = title.toLowerCase();
+            todoStream = todoStream.filter(todo -> todo.getTitle().toLowerCase().contains(normalizedTitle));
         }
 
 
         if (status != null && !status.isEmpty()) {
-            if (!status.contains("all")) {
+            String normalizedStatus = status.toLowerCase();
+
+            if (!normalizedStatus.contains("all")) {
                 todoStream = todoStream.filter(todo -> {
                     if (todo.isDone()) {
-                        return status.contains("completed");
+                        return normalizedStatus.contains("completed");
                     }
 
-                    return status.contains("pending");
+                    return normalizedStatus.contains("pending");
                 });
             }
         }
 
+        if (priority != null && !priority.isEmpty()) {
+            String normalizedPriority = priority.toLowerCase();
+
+            if (!normalizedPriority.contains("all")) {
+                todoStream = todoStream.filter(todo -> switch (todo.getPriority()) {
+                    case TodoPriority.HIGH -> normalizedPriority.contains("high");
+                    case TodoPriority.MEDIUM -> normalizedPriority.contains("medium");
+                    case TodoPriority.LOW -> normalizedPriority.contains("low");
+                });
+            }
+        }
 
         return new ArrayList<>(todoStream.toList());
     }
