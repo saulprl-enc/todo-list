@@ -19,14 +19,7 @@ export const TodoTable = () => {
 
   return (
     <ScrollArea className="relative h-full w-full rounded-sm border-2 border-primary">
-      <div className="sticky left-0 top-0 border-b border-b-slate-400 flex w-full items-center gap-2 bg-secondary p-4 font-bold">
-        <Checkbox />
-        <span className="flex w-2/5">Title</span>
-        <span className="flex w-1/6">Priority</span>
-        <span className="flex w-1/6">Due date</span>
-        <div className="flex flex-grow"></div>
-        <span className="flex w-1/6 justify-end">Actions</span>
-      </div>
+      <TodoTableHeader />
       <ul className="flex min-w-full flex-col items-stretch gap-2 p-2">
         {data.map((todo) => (
           <TodoItem key={todo.id}>
@@ -45,5 +38,18 @@ export const TodoTable = () => {
         ))}
       </ul>
     </ScrollArea>
+  );
+};
+
+const TodoTableHeader = () => {
+  return (
+    <div className="sticky left-0 top-0 flex w-full items-center gap-2 border-b border-b-slate-400 bg-secondary p-4 font-bold">
+      <Checkbox />
+      <TodoItemTitle>Title</TodoItemTitle>
+      <TodoItemPriority>Priority</TodoItemPriority>
+      <TodoItemDueDate>Due date</TodoItemDueDate>
+      <div className="flex flex-grow"></div>
+      <TodoItemActions>Actions</TodoItemActions>
+    </div>
   );
 };
