@@ -89,7 +89,7 @@ public class TodoRepository {
             if (!normalizedStatus.contains("all")) {
                 todoStream = todoStream.filter(todo -> {
                     if (todo.isDone()) {
-                        return normalizedStatus.contains("completed");
+                        return normalizedStatus.contains("done");
                     }
 
                     return normalizedStatus.contains("pending");
