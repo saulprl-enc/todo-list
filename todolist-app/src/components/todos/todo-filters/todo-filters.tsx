@@ -19,6 +19,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useSearchParams } from "react-router-dom";
 
 const TodoFiltersForm = z.object({
   name: z.string().optional(),
@@ -36,32 +37,32 @@ const TodoFiltersForm = z.object({
 type TodoFiltersForm = z.infer<typeof TodoFiltersForm>;
 
 export const TodoFilters = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const titleParam = searchParams.get("title") ?? "";
+  const priorityParam = searchParams.get("priority") ?? "all";
+  const statusParam = searchParams.get("status") ?? "all";
+
   const form = useForm<TodoFiltersForm>({
     resolver: zodResolver(TodoFiltersForm),
     defaultValues: {
-      name: "",
+      name: titleParam,
       priority: {
-        high: true,
-        medium: true,
-        low: true,
+        high: /high|all/i.test(priorityParam),
+        medium: /medium|all/i.test(priorityParam),
+        low: /low|all/i.test(priorityParam),
       },
       status: {
-        completed: true,
-        pending: true,
+        completed: /done|all/i.test(statusParam),
+        pending: /pending|all/i.test(statusParam),
       },
     },
   });
 
-  const buildPriorityDisplayValue = (value: TodoFiltersForm["priority"]) => {
-    if (!value.high && !value.medium && !value.low) {
-      // form.setValue("priority", { high: true, medium: true, low: true });
-      form.setValue("priority.high", true);
-      form.setValue("priority.medium", true);
-      form.setValue("priority.low", true);
-
-      return;
-    }
-
+  const joinPriority = (
+    value: TodoFiltersForm["priority"],
+    separator: string = ",",
+  ) => {
     const selectedPriorities: Array<string> = [];
 
     if (value.high) selectedPriorities.push("High");
@@ -70,20 +71,16 @@ export const TodoFilters = () => {
 
     const displayValue =
       selectedPriorities.length === 3
-        ? `All, ${selectedPriorities.join(", ")}`
-        : selectedPriorities.join(", ");
+        ? `All${separator}${selectedPriorities.join(separator)}`
+        : selectedPriorities.join(separator);
 
     return displayValue;
   };
 
-  const buildStatusDisplayValue = (value: TodoFiltersForm["status"]) => {
-    if (!value.completed && !value.pending) {
-      form.setValue("status.completed", true);
-      form.setValue("status.pending", true);
-
-      return;
-    }
-
+  const joinStatus = (
+    value: TodoFiltersForm["status"],
+    separator: string = ",",
+  ) => {
     const selectedStatuses: Array<string> = [];
 
     if (value.completed) selectedStatuses.push("Done");
@@ -91,14 +88,33 @@ export const TodoFilters = () => {
 
     const displayValue =
       selectedStatuses.length === 2
-        ? `All, ${selectedStatuses.join(", ")}`
-        : selectedStatuses.join(", ");
+        ? `All${separator}${selectedStatuses.join(separator)}`
+        : selectedStatuses.join(separator);
 
     return displayValue;
   };
 
   const onSubmit = (data: TodoFiltersForm) => {
-    console.log(data);
+    if (!data.priority.high && !data.priority.medium && !data.priority.low) {
+      form.setValue("priority.high", true);
+      form.setValue("priority.medium", true);
+      form.setValue("priority.low", true);
+    }
+
+    if (!data.status.completed && !data.status.pending) {
+      form.setValue("status.completed", true);
+      form.setValue("status.pending", true);
+    }
+
+    setSearchParams((params) => {
+      params.set("page", "1");
+
+      data.name ? params.set("title", data.name) : params.delete("title");
+      params.set("priority", joinPriority(data.priority).toLowerCase());
+      params.set("status", joinStatus(data.status).toLowerCase());
+
+      return params;
+    });
   };
 
   return (
@@ -132,7 +148,7 @@ export const TodoFilters = () => {
                 <FormControl>
                   <Popover>
                     <PopoverTrigger className="rounded-sm border-2 border-primary p-1">
-                      {buildPriorityDisplayValue(field.value)}
+                      {joinPriority(field.value, ", ")}
                     </PopoverTrigger>
                     <PopoverContent className="flex w-fit flex-col gap-2">
                       <FormField
@@ -198,7 +214,7 @@ export const TodoFilters = () => {
                   <FormControl>
                     <Popover>
                       <PopoverTrigger className="rounded-sm border-2 border-primary p-1">
-                        {buildStatusDisplayValue(field.value)}
+                        {joinStatus(field.value, ", ")}
                       </PopoverTrigger>
                       <PopoverContent className="flex w-fit flex-col gap-2">
                         <FormField

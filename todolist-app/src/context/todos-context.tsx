@@ -14,6 +14,9 @@ const TodosContext = createContext<TodoResponse | null>(null);
 interface FetchTodosParams {
   page: string;
   size: string;
+  title: string;
+  priority: string;
+  status: string;
 }
 
 const fetchTodos = async (searchParams: FetchTodosParams) => {
@@ -45,14 +48,24 @@ interface ProviderProps {
 }
 
 export const TodosProvider: FC<ProviderProps> = ({ children }) => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
   const currentPage = searchParams.get("page") ?? "1";
   const size = searchParams.get("size") ?? "10";
+  const searchTitle = searchParams.get("title") ?? "";
+  const priority = searchParams.get("priority") ?? "all";
+  const status = searchParams.get("status") ?? "all";
 
   const todosQuery = useQuery({
-    queryKey: ["todos", currentPage],
-    queryFn: () => fetchTodos({ page: currentPage, size }),
+    queryKey: ["todos", currentPage, { title: searchTitle, priority, status }],
+    queryFn: () =>
+      fetchTodos({
+        page: currentPage,
+        size,
+        title: searchTitle,
+        priority,
+        status,
+      }),
     keepPreviousData: true,
   });
 

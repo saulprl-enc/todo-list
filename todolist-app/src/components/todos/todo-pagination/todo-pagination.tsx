@@ -58,7 +58,7 @@ export const TodoPagination = () => {
         <PaginationNext to={nextPageUrl} disabled={!nextPage} />
         <PaginationLast
           to={createQueryString(totalPages.toString())}
-          disabled={currentPage === totalPages}
+          disabled={currentPage === totalPages || totalPages === 0}
         />
       </PaginationContent>
     </Pagination>
