@@ -6,15 +6,21 @@ import { CheckedState } from "@radix-ui/react-checkbox";
 import { FC, ReactNode, useState } from "react";
 
 interface Props {
+  checked?: boolean;
   className?: string;
   children: ReactNode;
 }
 
-export const TodoItem: FC<Props> = ({ className, children }) => {
+export const TodoItem: FC<Props> = ({
+  checked = false,
+  className,
+  children,
+}) => {
   return (
     <li
       className={cn(
         "flex items-center gap-2 rounded-sm p-2 transition-colors hover:bg-muted",
+        // checked && "hover:bg-purple-400",
         className,
       )}
     >

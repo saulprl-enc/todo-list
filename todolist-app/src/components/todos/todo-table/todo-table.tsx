@@ -28,7 +28,7 @@ export const TodoTable = () => {
       <TodoTableHeader />
       <ul className="flex min-w-full flex-col items-stretch gap-2 p-2">
         {data.map((todo) => (
-          <TodoItem key={todo.id}>
+          <TodoItem key={todo.id} checked={todo.done}>
             <TodoItemCheck todoId={todo.id} checked={todo.done} />
             <TodoItemTitle>{todo.title}</TodoItemTitle>
             <TodoItemPriority>{todo.priority.toLowerCase()}</TodoItemPriority>
