@@ -42,7 +42,8 @@ export const UpdateTodo: FC<Props> = ({ todo }) => {
       throw new Error("Unable to update ToDo.");
     }
 
-    queryClient.invalidateQueries("todos");
+    queryClient.invalidateQueries(["todos"]);
+    queryClient.invalidateQueries(["todos-stats"]);
   });
 
   const form = useForm<UpdateTodoForm>({

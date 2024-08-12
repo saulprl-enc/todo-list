@@ -37,7 +37,8 @@ export const CreateTodoButton = () => {
       throw new Error("Unable to save ToDo.");
     }
 
-    queryClient.invalidateQueries("todos");
+    queryClient.invalidateQueries(["todos"]);
+    queryClient.invalidateQueries(["todos-stats"]);
   });
 
   const form = useForm<NewTodoForm>({

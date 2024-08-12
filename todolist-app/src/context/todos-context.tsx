@@ -116,6 +116,7 @@ export const TodosProvider: FC<ProviderProps> = ({ children }) => {
     }
 
     queryClient.invalidateQueries(["todos"]);
+    queryClient.invalidateQueries(["todos-stats"]);
   });
 
   const undoTodo = useMutation(async (id: string) => {
@@ -140,6 +141,7 @@ export const TodosProvider: FC<ProviderProps> = ({ children }) => {
     }
 
     queryClient.invalidateQueries(["todos"]);
+    queryClient.invalidateQueries(["todos-stats"]);
   });
 
   if (todosQuery.isLoading) {

@@ -27,3 +27,12 @@ export const TodoResponse = z.object({
 });
 
 export type TodoResponse = z.infer<typeof TodoResponse>;
+
+export const TodoStatsResponse = z.object({
+  globalAverage: z.string().nullable(),
+  lowAverage: z.string().nullable(),
+  mediumAverage: z.string().nullable(),
+  highAverage: z.string().nullable(),
+});
+
+export type TodoStatsResponse$ = z.infer<typeof TodoStatsResponse>;
