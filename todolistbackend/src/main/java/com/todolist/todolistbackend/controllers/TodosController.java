@@ -1,6 +1,7 @@
 package com.todolist.todolistbackend.controllers;
 
 import com.todolist.todolistbackend.dto.TodoDto;
+import com.todolist.todolistbackend.dto.TodoStats;
 import com.todolist.todolistbackend.enums.TodoPriority;
 import com.todolist.todolistbackend.mapper.TodoMapper;
 import com.todolist.todolistbackend.model.Todo;
@@ -132,6 +133,11 @@ public class TodosController {
         }
 
         return todoMapper.convertToDto(deletedTodo);
+    }
+
+    @GetMapping("/stats")
+    public TodoStats getTodoStats() {
+        return todoService.calculateTodoStats();
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

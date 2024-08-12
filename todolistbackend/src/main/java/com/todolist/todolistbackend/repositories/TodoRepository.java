@@ -38,8 +38,8 @@ public class TodoRepository {
         return todo;
     }
 
-    public Collection<Todo> findTodos() {
-        return this.db.values();
+    public ArrayList<Todo> findTodos() {
+        return new ArrayList<>(this.db.values().stream().toList());
     }
 
     public PaginatedData<Todo> findTodos(int page, int size, String title, String sortByPriority, String sortByDate, String status, String priority) {

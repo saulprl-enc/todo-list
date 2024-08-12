@@ -1,5 +1,6 @@
 package com.todolist.todolistbackend.services;
 
+import com.todolist.todolistbackend.dto.TodoStats;
 import com.todolist.todolistbackend.enums.TodoPriority;
 import com.todolist.todolistbackend.model.Todo;
 import com.todolist.todolistbackend.repositories.TodoRepository;
@@ -8,7 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -33,9 +37,7 @@ public class TodoService {
         todo.setId(UUID.randomUUID().toString());
         todo.setCreatedAt(LocalDateTime.now());
 
-        Todo createdTodo = this.repo.saveTodo(todo);
-
-        return createdTodo;
+        return this.repo.saveTodo(todo);
     }
 
     public Todo updateTodo(Todo updatedTodo) {
@@ -66,5 +68,65 @@ public class TodoService {
         todo.setCompletedAt(null);
 
         this.repo.updateTodo(todo.getId(), todo);
+    }
+
+    public TodoStats calculateTodoStats() {
+        ArrayList<Todo> todos = this.repo.findTodos();
+        List<Todo> completedTodos = todos.stream().filter(Todo::isDone).toList();
+
+
+        long globalTotal = 0;
+        long lowTotal = 0;
+        long mediumTotal = 0;
+        long highTotal = 0;
+
+        int lowCount = 0;
+        int mediumCount = 0;
+        int highCount = 0;
+
+        for (Todo todo : completedTodos) {
+            long difference = todo.getCreatedAt().until(todo.getCompletedAt(), ChronoUnit.SECONDS);
+            globalTotal += difference;
+
+            switch (todo.getPriority()) {
+                case TodoPriority.LOW:
+                    lowTotal += difference;
+                    lowCount++;
+                    break;
+                case TodoPriority.MEDIUM:
+                    mediumTotal += difference;
+                    mediumCount++;
+                    break;
+                case TodoPriority.HIGH:
+                    highTotal += difference;
+                    highCount++;
+                    break;
+            }
+        }
+
+        TodoStats stats = new TodoStats();
+
+        if (!completedTodos.isEmpty()) {
+            stats.setGlobalAverage(buildTimeString(globalTotal / completedTodos.size()));
+        }
+        if (lowCount > 0) {
+            stats.setLowAverage(buildTimeString(lowTotal / lowCount));
+        }
+        if (mediumCount > 0) {
+            stats.setMediumAverage(buildTimeString(mediumTotal / mediumCount));
+        }
+        if (highCount > 0) {
+            stats.setHighAverage(buildTimeString(highTotal / highCount));
+        }
+
+        return stats;
+    }
+
+    private String buildTimeString(long totalSeconds) {
+        long hours = totalSeconds / (60 * 60);
+        long minutes = (totalSeconds % (60 * 60)) / 60;
+        long seconds = totalSeconds % 60;
+
+        return String.format("%dh %dm %ds", hours, minutes, seconds);
     }
 }
