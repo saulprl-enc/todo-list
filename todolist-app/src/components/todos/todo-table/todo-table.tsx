@@ -8,7 +8,6 @@ import {
   TodoItemCheck,
   TodoItemDeleteButton,
   TodoItemDueDate,
-  TodoItemEditButton,
   TodoItemPriority,
   TodoItemTitle,
 } from "../todo-item/todo-item";
@@ -39,7 +38,7 @@ export const TodoTable = () => {
             <div className="flex flex-grow"></div>
             <TodoItemActions>
               <UpdateTodo todo={todo} />
-              <TodoItemDeleteButton />
+              <TodoItemDeleteButton todoId={todo.id} />
             </TodoItemActions>
           </TodoItem>
         ))}

@@ -4,6 +4,8 @@ import { useTodos } from "@/context/todos-context";
 import { cn } from "@/lib/utils";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { FC, ReactNode, useState } from "react";
+import { MdDelete } from "react-icons/md";
+import { useMutation, useQueryClient } from "react-query";
 
 interface Props {
   checked?: boolean;
@@ -87,6 +89,32 @@ export const TodoItemEditButton = () => {
   return <Button variant="secondary">Edit</Button>;
 };
 
-export const TodoItemDeleteButton = () => {
-  return <Button variant="destructive">Delete</Button>;
+interface DeleteProps {
+  todoId: string;
+}
+
+export const TodoItemDeleteButton: FC<DeleteProps> = ({ todoId }) => {
+  const queryClient = useQueryClient();
+
+  const deleteTodo = useMutation(async () => {
+    const res = await fetch(`http://localhost:9090/todos/${todoId}`, {
+      method: "DELETE",
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      console.error(data);
+
+      throw new Error("Unable to delete ToDo.");
+    }
+
+    queryClient.invalidateQueries("todos");
+  });
+
+  return (
+    <Button variant="destructive" onClick={() => deleteTodo.mutate()}>
+      <MdDelete />
+    </Button>
+  );
 };
