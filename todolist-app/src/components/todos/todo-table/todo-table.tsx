@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { useSearchParams } from "react-router-dom";
 import { FaSort, FaSortDown, FaSortUp } from "react-icons/fa6";
 import { FC } from "react";
+import { UpdateTodo } from "../update-todo/update-todo";
 
 export const TodoTable = () => {
   const {
@@ -37,7 +38,7 @@ export const TodoTable = () => {
             </TodoItemDueDate>
             <div className="flex flex-grow"></div>
             <TodoItemActions>
-              <TodoItemEditButton />
+              <UpdateTodo todo={todo} />
               <TodoItemDeleteButton />
             </TodoItemActions>
           </TodoItem>
