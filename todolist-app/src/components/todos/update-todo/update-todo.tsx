@@ -64,7 +64,7 @@ export const UpdateTodo: FC<Props> = ({ todo }) => {
       <DialogTrigger asChild>
         <Button
           onClick={() => setDialogOpen(true)}
-          className="w-fit gap-1 bg-amber-500 hover:bg-amber-500/80"
+          className="w-fit gap-1 bg-amber-500 px-2 text-lg hover:bg-amber-500/90"
         >
           <MdModeEdit />
         </Button>

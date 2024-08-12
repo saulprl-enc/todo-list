@@ -113,7 +113,11 @@ export const TodoItemDeleteButton: FC<DeleteProps> = ({ todoId }) => {
   });
 
   return (
-    <Button variant="destructive" onClick={() => deleteTodo.mutate()}>
+    <Button
+      variant="destructive"
+      onClick={() => deleteTodo.mutate()}
+      className="px-2 text-lg"
+    >
       <MdDelete />
     </Button>
   );
