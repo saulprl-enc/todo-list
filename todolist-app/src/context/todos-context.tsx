@@ -1,15 +1,21 @@
 import { createContext, FC, ReactNode, useContext } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useQuery } from "react-query";
+import {
+  useMutation,
+  UseMutationResult,
+  useQuery,
+  useQueryClient,
+} from "react-query";
 
-import { TodoResponse } from "@/models/todo";
+import { Todo, TodoResponse } from "@/models/todo";
 
-// interface ContextProps {
-//   data: TodoResponse;
-//   currentPage: number;
-// }
+interface ContextProps {
+  data: TodoResponse;
+  markAsDone: UseMutationResult<void, unknown, string, unknown>;
+  undoTodo: UseMutationResult<void, unknown, string, unknown>;
+}
 
-const TodosContext = createContext<TodoResponse | null>(null);
+const TodosContext = createContext<ContextProps | null>(null);
 
 interface FetchTodosParams {
   page: string;
@@ -17,10 +23,20 @@ interface FetchTodosParams {
   title: string;
   priority: string;
   status: string;
+  sortByPriority?: string;
+  sortByDate?: string;
 }
 
 const fetchTodos = async (searchParams: FetchTodosParams) => {
   const params = new URLSearchParams({ ...searchParams });
+
+  if (!searchParams.sortByPriority) {
+    params.delete("sortByPriority");
+  }
+
+  if (!searchParams.sortByDate) {
+    params.delete("sortbyDate");
+  }
 
   const res = await fetch(`http://localhost:9090/todos?${params.toString()}`);
 
@@ -48,6 +64,7 @@ interface ProviderProps {
 }
 
 export const TodosProvider: FC<ProviderProps> = ({ children }) => {
+  const queryClient = useQueryClient();
   const [searchParams] = useSearchParams();
 
   const currentPage = searchParams.get("page") ?? "1";
@@ -55,9 +72,15 @@ export const TodosProvider: FC<ProviderProps> = ({ children }) => {
   const searchTitle = searchParams.get("title") ?? "";
   const priority = searchParams.get("priority") ?? "all";
   const status = searchParams.get("status") ?? "all";
+  const sortByPriority = searchParams.get("sortByPriority") ?? undefined;
+  const sortByDate = searchParams.get("sortByDate") ?? undefined;
 
   const todosQuery = useQuery({
-    queryKey: ["todos", currentPage, { title: searchTitle, priority, status }],
+    queryKey: [
+      "todos",
+      currentPage,
+      { title: searchTitle, priority, status, sortByPriority, sortByDate },
+    ],
     queryFn: () =>
       fetchTodos({
         page: currentPage,
@@ -65,8 +88,58 @@ export const TodosProvider: FC<ProviderProps> = ({ children }) => {
         title: searchTitle,
         priority,
         status,
+        sortByDate,
+        sortByPriority,
       }),
     keepPreviousData: true,
+  });
+
+  const markAsDone = useMutation(async (id: string) => {
+    const res = await fetch(`http://localhost:9090/todos/${id}/done`, {
+      method: "POST",
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      console.error(data);
+
+      throw new Error("Unable to mark ToDo as done.");
+    }
+
+    const todoParse = Todo.safeParse(data);
+
+    if (!todoParse.success) {
+      console.error(todoParse.error.toString());
+
+      throw new Error("Received unexpected response from the server.");
+    }
+
+    queryClient.invalidateQueries(["todos"]);
+  });
+
+  const undoTodo = useMutation(async (id: string) => {
+    const res = await fetch(`http://localhost:9090/todos/${id}/undone`, {
+      method: "PUT",
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      console.error(data);
+
+      throw new Error("Unable to mark ToDo as done.");
+    }
+
+    const todoParse = Todo.safeParse(data);
+
+    if (!todoParse.success) {
+      console.error(todoParse.error.toString());
+
+      throw new Error("Received unexpected response from the server.");
+    }
+
+    queryClient.invalidateQueries(["todos"]);
   });
 
   if (todosQuery.isLoading) {
@@ -78,7 +151,9 @@ export const TodosProvider: FC<ProviderProps> = ({ children }) => {
   }
 
   return (
-    <TodosContext.Provider value={todosQuery.data!}>
+    <TodosContext.Provider
+      value={{ data: todosQuery.data!, markAsDone, undoTodo }}
+    >
       {children}
     </TodosContext.Provider>
   );

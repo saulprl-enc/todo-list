@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useTodos } from "@/context/todos-context";
 import { cn } from "@/lib/utils";
-import { FC, ReactNode } from "react";
+import { CheckedState } from "@radix-ui/react-checkbox";
+import { FC, ReactNode, useState } from "react";
 
 interface Props {
   className?: string;
@@ -21,8 +23,32 @@ export const TodoItem: FC<Props> = ({ className, children }) => {
   );
 };
 
-export const TodoItemCheck: FC = () => {
-  return <Checkbox />;
+interface CheckProps {
+  checked?: boolean;
+  todoId: string;
+}
+
+export const TodoItemCheck: FC<CheckProps> = ({ todoId, checked = false }) => {
+  const [localCheck, setLocalCheck] = useState(checked);
+  const { markAsDone, undoTodo } = useTodos();
+
+  const handleCheckedChange = (value: CheckedState) => {
+    try {
+      setLocalCheck(!!value);
+
+      if (value) {
+        markAsDone.mutate(todoId);
+      } else {
+        undoTodo.mutate(todoId);
+      }
+    } catch (error) {
+      setLocalCheck(!value);
+    }
+  };
+
+  return (
+    <Checkbox checked={localCheck} onCheckedChange={handleCheckedChange} />
+  );
 };
 
 export const TodoItemTitle: FC<Props> = ({ className, children }) => {
@@ -45,9 +71,7 @@ export const TodoItemDueDate: FC<Props> = ({ className, children }) => {
 
 export const TodoItemActions: FC<Props> = ({ className, children }) => {
   return (
-    <div
-      className={cn("flex items-center justify-end gap-1", className)}
-    >
+    <div className={cn("flex items-center justify-end gap-1", className)}>
       {children}
     </div>
   );

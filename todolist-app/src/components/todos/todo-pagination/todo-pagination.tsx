@@ -14,7 +14,9 @@ import { useSearchParams } from "react-router-dom";
 export const TodoPagination = () => {
   const [searchParams] = useSearchParams();
 
-  const { currentPage, totalPages, nextPage, previousPage } = useTodos();
+  const {
+    data: { currentPage, totalPages, nextPage, previousPage },
+  } = useTodos();
 
   const createQueryString = (page: string) => {
     const params = new URLSearchParams(searchParams);
