@@ -9,13 +9,13 @@ import {
 
 import { Todo, TodoResponse } from "@/models/todo";
 
-interface ContextProps {
+export interface TodoContextProps {
   data: TodoResponse;
   markAsDone: UseMutationResult<void, unknown, string, unknown>;
   undoTodo: UseMutationResult<void, unknown, string, unknown>;
 }
 
-const TodosContext = createContext<ContextProps | null>(null);
+export const TodosContext = createContext<TodoContextProps | null>(null);
 
 interface FetchTodosParams {
   page: string;
