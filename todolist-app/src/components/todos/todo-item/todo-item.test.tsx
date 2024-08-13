@@ -63,11 +63,14 @@ describe("TodoItem", async () => {
   });
 
   it("checkbox should change state when clicked", async () => {
+    const mockMarkAsDone = vi.fn().mockImplementation(() => Promise.resolve());
+    const mockUndoTodo = vi.fn().mockImplementation(() => Promise.resolve());
+
     function TodoItemTest() {
       const contextValue: TodoContextProps = {
         data: { ...todoResData },
-        markAsDone: useMutation((_: string) => Promise.resolve()),
-        undoTodo: useMutation((_: string) => Promise.resolve()),
+        markAsDone: useMutation((_: string) => mockMarkAsDone()),
+        undoTodo: useMutation((_: string) => mockUndoTodo()),
       };
 
       return (
@@ -91,6 +94,12 @@ describe("TodoItem", async () => {
 
     await userEvent.click(todoItemCheck);
 
+    expect(mockMarkAsDone).toHaveBeenCalled();
+    expect(mockUndoTodo).not.toHaveBeenCalled();
     expect(todoItemCheck.getAttribute("aria-checked")).toBe("true");
+
+    await userEvent.click(todoItemCheck);
+
+    expect(mockUndoTodo).toHaveBeenCalled();
   });
 });
