@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useTodos } from "@/context/todos-context";
 import { cn } from "@/lib/utils";
@@ -9,6 +9,16 @@ import { FC, ReactNode, useState } from "react";
 import { MdDelete } from "react-icons/md";
 import { useMutation, useQueryClient } from "react-query";
 import { UpdateTodo } from "../update-todo/update-todo";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface TodoItemProps {
   todo: Todo;
@@ -16,7 +26,7 @@ interface TodoItemProps {
 
 export const TodoItem: FC<TodoItemProps> = ({ todo }) => {
   return (
-    <TodoItemWrapper>
+    <TodoItemWrapper className={cn(todo.done && "line-through")}>
       <TodoItemCheck checked={todo.done} todoId={todo.id} />
       <TodoItemTitle>{todo.title}</TodoItemTitle>
       <TodoItemPriority>{todo.priority.toLowerCase()}</TodoItemPriority>
@@ -167,15 +177,31 @@ export const TodoItemDeleteButton: FC<DeleteProps> = ({ todoId }) => {
     }
 
     queryClient.invalidateQueries("todos");
+    queryClient.invalidateQueries(["todos-stats"]);
   });
 
   return (
-    <Button
-      variant="destructive"
-      onClick={() => deleteTodo.mutate()}
-      className="px-2 text-lg"
-    >
-      <MdDelete />
-    </Button>
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button variant="destructive" className="px-2 text-lg">
+          <MdDelete />
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+        <AlertDialogDescription>
+          This action cannot be undone. This ToDo will be permanently deleted.
+        </AlertDialogDescription>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={() => deleteTodo.mutate()}
+            className={buttonVariants({ variant: "destructive" })}
+          >
+            Delete
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 };
