@@ -35,7 +35,7 @@ const fetchTodos = async (searchParams: FetchTodosParams) => {
   }
 
   if (!searchParams.sortByDate) {
-    params.delete("sortbyDate");
+    params.delete("sortByDate");
   }
 
   const res = await fetch(`http://localhost:9090/todos?${params.toString()}`);
