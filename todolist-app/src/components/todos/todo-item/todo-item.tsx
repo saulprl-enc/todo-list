@@ -4,7 +4,7 @@ import { useTodos } from "@/context/todos-context";
 import { cn } from "@/lib/utils";
 import { Todo } from "@/models/todo";
 import { CheckedState } from "@radix-ui/react-checkbox";
-import { format } from "date-fns";
+import { differenceInWeeks, format } from "date-fns";
 import { FC, ReactNode, useState } from "react";
 import { MdDelete } from "react-icons/md";
 import { useMutation, useQueryClient } from "react-query";
@@ -19,14 +19,53 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { cva } from "class-variance-authority";
 
 interface TodoItemProps {
   todo: Todo;
 }
 
+const variants = cva("", {
+  variants: {
+    variant: {
+      default: "",
+      done: "line-through bg-transparent hover:bg-muted",
+      safe: "bg-safe/50 hover:bg-safe/40",
+      warning: "bg-warning/50 hover:bg-warning/40",
+      danger: "bg-danger/50 hover:bg-danger/40",
+    },
+  },
+  defaultVariants: { variant: "default" },
+});
+
 export const TodoItem: FC<TodoItemProps> = ({ todo }) => {
+  const getTodoVariant = () => {
+    if (!todo.due || todo.done) {
+      return variants({ variant: "default" });
+    }
+
+    const baseDate = new Date();
+    const todoDue = new Date(todo.due);
+
+    const weeksDiff = differenceInWeeks(todoDue, baseDate);
+
+    if (weeksDiff > 2) {
+      return variants({ variant: "safe" });
+    }
+
+    if (weeksDiff > 1) {
+      return variants({ variant: "warning" });
+    }
+
+    if (weeksDiff <= 1) {
+      return variants({ variant: "danger" });
+    }
+  };
+
   return (
-    <TodoItemWrapper className={cn(todo.done && "line-through")}>
+    <TodoItemWrapper
+      className={cn(todo.done && "line-through", getTodoVariant())}
+    >
       <TodoItemCheck checked={todo.done} todoId={todo.id} />
       <TodoItemTitle>{todo.title}</TodoItemTitle>
       <TodoItemPriority>{todo.priority.toLowerCase()}</TodoItemPriority>
@@ -57,7 +96,7 @@ export const TodoItemWrapper: FC<TodoItemWrapperProps> = ({
     <li
       data-testid="todo-item"
       className={cn(
-        "flex items-center gap-2 rounded-sm p-2 transition-colors hover:bg-muted",
+        "flex items-center gap-2 rounded-sm p-2 px-3 transition-colors hover:bg-muted",
         // checked && "hover:bg-purple-400",
         className,
       )}
