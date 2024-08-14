@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useSearchParams } from "react-router-dom";
+import { FaCaretDown } from "react-icons/fa6";
 
 const TodoFiltersForm = z.object({
   name: z.string().optional(),
@@ -71,7 +72,7 @@ export const TodoFilters = () => {
 
     const displayValue =
       selectedPriorities.length === 3
-        ? `All${separator}${selectedPriorities.join(separator)}`
+        ? `All`
         : selectedPriorities.join(separator);
 
     return displayValue;
@@ -87,9 +88,7 @@ export const TodoFilters = () => {
     if (value.pending) selectedStatuses.push("Pending");
 
     const displayValue =
-      selectedStatuses.length === 2
-        ? `All${separator}${selectedStatuses.join(separator)}`
-        : selectedStatuses.join(separator);
+      selectedStatuses.length === 2 ? `All` : selectedStatuses.join(separator);
 
     return displayValue;
   };
@@ -153,23 +152,30 @@ export const TodoFilters = () => {
                   <Popover>
                     <PopoverTrigger
                       data-testid="priority-field"
-                      className="rounded-sm border-2 border-primary p-1"
+                      className="flex w-full items-center justify-between rounded-sm border-2 border-primary p-1 sm:w-56"
                     >
-                      {joinPriority(field.value, ", ")}
+                      <div className="w-fit">
+                        {joinPriority(field.value, ", ")}
+                      </div>
+                      <div className="flex size-8 items-center justify-center rounded bg-muted text-xl">
+                        <FaCaretDown />
+                      </div>
                     </PopoverTrigger>
-                    <PopoverContent className="flex w-fit flex-col gap-2">
+                    <PopoverContent className="flex flex-col gap-1 p-2">
                       <FormField
                         control={form.control}
                         name="priority.high"
                         render={({ field }) => (
-                          <FormItem className="flex items-center gap-2 space-y-0">
+                          <FormItem className="flex items-center gap-2 space-y-0 rounded p-2 transition-colors hover:bg-muted">
                             <FormControl>
                               <Checkbox
                                 checked={field.value}
                                 onCheckedChange={field.onChange}
                               />
                             </FormControl>
-                            <FormLabel>High</FormLabel>
+                            <FormLabel className="w-full cursor-pointer">
+                              High
+                            </FormLabel>
                           </FormItem>
                         )}
                       />
@@ -177,14 +183,16 @@ export const TodoFilters = () => {
                         control={form.control}
                         name="priority.medium"
                         render={({ field }) => (
-                          <FormItem className="flex items-center gap-2 space-y-0">
+                          <FormItem className="flex items-center gap-2 space-y-0 rounded p-2 transition-colors hover:bg-muted">
                             <FormControl>
                               <Checkbox
                                 checked={field.value}
                                 onCheckedChange={field.onChange}
                               />
                             </FormControl>
-                            <FormLabel>Medium</FormLabel>
+                            <FormLabel className="w-full cursor-pointer">
+                              Medium
+                            </FormLabel>
                           </FormItem>
                         )}
                       />
@@ -192,14 +200,16 @@ export const TodoFilters = () => {
                         control={form.control}
                         name="priority.low"
                         render={({ field }) => (
-                          <FormItem className="flex items-center gap-2 space-y-0">
+                          <FormItem className="flex items-center gap-2 space-y-0 rounded p-2 transition-colors hover:bg-muted">
                             <FormControl>
                               <Checkbox
                                 checked={field.value}
                                 onCheckedChange={field.onChange}
                               />
                             </FormControl>
-                            <FormLabel>Low</FormLabel>
+                            <FormLabel className="w-full cursor-pointer">
+                              Low
+                            </FormLabel>
                           </FormItem>
                         )}
                       />
@@ -222,23 +232,30 @@ export const TodoFilters = () => {
                     <Popover>
                       <PopoverTrigger
                         data-testid="status-field"
-                        className="rounded-sm border-2 border-primary p-1"
+                        className="flex w-full items-center justify-between rounded-sm border-2 border-primary p-1 sm:w-56"
                       >
-                        {joinStatus(field.value, ", ")}
+                        <div className="w-fit">
+                          {joinStatus(field.value, ", ")}
+                        </div>
+                        <div className="flex size-8 items-center justify-center rounded bg-muted text-xl">
+                          <FaCaretDown />
+                        </div>
                       </PopoverTrigger>
-                      <PopoverContent className="flex w-fit flex-col gap-2">
+                      <PopoverContent className="flex flex-col gap-1 p-2">
                         <FormField
                           control={form.control}
                           name="status.completed"
                           render={({ field }) => (
-                            <FormItem className="flex items-center gap-2 space-y-0">
+                            <FormItem className="flex items-center gap-2 space-y-0 rounded p-2 transition-colors hover:bg-muted">
                               <FormControl>
                                 <Checkbox
                                   checked={field.value}
                                   onCheckedChange={field.onChange}
                                 />
                               </FormControl>
-                              <FormLabel>Done</FormLabel>
+                              <FormLabel className="w-full cursor-pointer">
+                                Done
+                              </FormLabel>
                             </FormItem>
                           )}
                         />
@@ -246,14 +263,16 @@ export const TodoFilters = () => {
                           control={form.control}
                           name="status.pending"
                           render={({ field }) => (
-                            <FormItem className="flex items-center gap-2 space-y-0">
+                            <FormItem className="flex items-center gap-2 space-y-0 rounded p-2 transition-colors hover:bg-muted">
                               <FormControl>
                                 <Checkbox
                                   checked={field.value}
                                   onCheckedChange={field.onChange}
                                 />
                               </FormControl>
-                              <FormLabel>Pending</FormLabel>
+                              <FormLabel className="w-full cursor-pointer">
+                                Pending
+                              </FormLabel>
                             </FormItem>
                           )}
                         />
