@@ -131,7 +131,11 @@ export const TodoFilters = () => {
               <div className="flex items-center gap-2">
                 <FormLabel className="min-w-14">Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Do the dishes" {...field} />
+                  <Input
+                    data-testid="title-field"
+                    placeholder="Do the dishes"
+                    {...field}
+                  />
                 </FormControl>
               </div>
               <FormMessage />
@@ -147,7 +151,10 @@ export const TodoFilters = () => {
                 <FormLabel className="min-w-14">Priority</FormLabel>
                 <FormControl>
                   <Popover>
-                    <PopoverTrigger className="rounded-sm border-2 border-primary p-1">
+                    <PopoverTrigger
+                      data-testid="priority-field"
+                      className="rounded-sm border-2 border-primary p-1"
+                    >
                       {joinPriority(field.value, ", ")}
                     </PopoverTrigger>
                     <PopoverContent className="flex w-fit flex-col gap-2">
@@ -213,7 +220,10 @@ export const TodoFilters = () => {
                   <FormLabel className="min-w-14">Status</FormLabel>
                   <FormControl>
                     <Popover>
-                      <PopoverTrigger className="rounded-sm border-2 border-primary p-1">
+                      <PopoverTrigger
+                        data-testid="status-field"
+                        className="rounded-sm border-2 border-primary p-1"
+                      >
                         {joinStatus(field.value, ", ")}
                       </PopoverTrigger>
                       <PopoverContent className="flex w-fit flex-col gap-2">

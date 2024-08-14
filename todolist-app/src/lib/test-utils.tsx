@@ -1,6 +1,7 @@
 import { render } from "@testing-library/react";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { BrowserRouter } from "react-router-dom";
 import { vi } from "vitest";
 
 export const renderWithClient = (
@@ -10,6 +11,10 @@ export const renderWithClient = (
   return render(
     <QueryClientProvider client={client}>{ui}</QueryClientProvider>,
   );
+};
+
+export const renderWithRouter = (path: string, ui: React.ReactElement) => {
+  render(ui, { wrapper: BrowserRouter });
 };
 
 export const mockMarkAsDone = vi
