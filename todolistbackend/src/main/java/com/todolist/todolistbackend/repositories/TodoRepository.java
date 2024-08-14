@@ -1,5 +1,7 @@
 package com.todolist.todolistbackend.repositories;
 
+import com.todolist.todolistbackend.dto.TodoStats;
+import com.todolist.todolistbackend.dto.TodoStatsImpl;
 import com.todolist.todolistbackend.enums.TodoPriority;
 import com.todolist.todolistbackend.model.Todo;
 import com.todolist.todolistbackend.web.PaginatedData;
@@ -9,6 +11,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -125,6 +128,60 @@ public class TodoRepository implements ITodoRepository {
 
     public Todo deleteTodo(String id) {
         return this.db.remove(id);
+    }
+
+    public TodoStats<Long> calculateTodoStats() {
+        List<Todo> completedTodos = this.findCompletedTodos();
+
+        long globalTotal = 0;
+        long lowTotal = 0;
+        long mediumTotal = 0;
+        long highTotal = 0;
+
+        long lowCount = 0;
+        long mediumCount = 0;
+        long highCount = 0;
+
+        for (Todo todo : completedTodos) {
+            long difference = todo.getCreatedAt().until(todo.getCompletedAt(), ChronoUnit.SECONDS);
+            globalTotal += difference;
+
+            switch (todo.getPriority()) {
+                case TodoPriority.LOW:
+                    lowTotal += difference;
+                    lowCount++;
+                    break;
+                case TodoPriority.MEDIUM:
+                    mediumTotal += difference;
+                    mediumCount++;
+                    break;
+                case TodoPriority.HIGH:
+                    highTotal += difference;
+                    highCount++;
+                    break;
+            }
+        }
+
+        TodoStats<Long> stats = new TodoStatsImpl<>();
+
+        if (!completedTodos.isEmpty()) {
+            stats.setGlobalAverage(globalTotal / completedTodos.size());
+        }
+        if (lowCount > 0) {
+            stats.setLowAverage(lowTotal / lowCount);
+        }
+        if (mediumCount > 0) {
+            stats.setMediumAverage(mediumTotal / mediumCount);
+        }
+        if (highCount > 0) {
+            stats.setHighAverage(highTotal / highCount);
+        }
+
+        return stats;
+    }
+
+    List<Todo> findCompletedTodos() {
+        return this.db.values().stream().filter(Todo::isDone).toList();
     }
 
     void sortTodos(ArrayList<Todo> todos, @Nullable String sortByPriority, @Nullable String sortByDueDate) {

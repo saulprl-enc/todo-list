@@ -1,50 +1,19 @@
 package com.todolist.todolistbackend.dto;
 
-public class TodoStats {
-    private String globalAverage;
-    private String lowAverage;
-    private String mediumAverage;
-    private String highAverage;
+public interface TodoStats<T> {
+    T getGlobalAverage();
 
-    public TodoStats() {
-    }
+    void setGlobalAverage(T globalAverage);
 
-    public TodoStats(String averageCompletionInMillis, String averageLowCompletionInMillis, String averageMediumCompletionInMillis, String averageHighCompletionInMillis) {
-        this.globalAverage = averageCompletionInMillis;
-        this.lowAverage = averageLowCompletionInMillis;
-        this.mediumAverage = averageMediumCompletionInMillis;
-        this.highAverage = averageHighCompletionInMillis;
-    }
+    T getLowAverage();
 
-    public String getGlobalAverage() {
-        return globalAverage;
-    }
+    void setLowAverage(T lowAverage);
 
-    public void setGlobalAverage(String globalAverage) {
-        this.globalAverage = globalAverage;
-    }
+    T getMediumAverage();
 
-    public String getLowAverage() {
-        return lowAverage;
-    }
+    void setMediumAverage(T mediumAverage);
 
-    public void setLowAverage(String lowAverage) {
-        this.lowAverage = lowAverage;
-    }
+    T getHighAverage();
 
-    public String getMediumAverage() {
-        return mediumAverage;
-    }
-
-    public void setMediumAverage(String mediumAverage) {
-        this.mediumAverage = mediumAverage;
-    }
-
-    public String getHighAverage() {
-        return highAverage;
-    }
-
-    public void setHighAverage(String highAverage) {
-        this.highAverage = highAverage;
-    }
+    void setHighAverage(T highAverage);
 }

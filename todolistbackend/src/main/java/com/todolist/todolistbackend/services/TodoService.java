@@ -1,9 +1,9 @@
 package com.todolist.todolistbackend.services;
 
 import com.todolist.todolistbackend.dto.TodoStats;
+import com.todolist.todolistbackend.dto.TodoStatsImpl;
 import com.todolist.todolistbackend.enums.TodoPriority;
 import com.todolist.todolistbackend.model.Todo;
-import com.todolist.todolistbackend.repositories.ITodoRepository;
 import com.todolist.todolistbackend.repositories.TodoRepository;
 import com.todolist.todolistbackend.web.PaginatedData;
 import org.springframework.stereotype.Service;
@@ -72,63 +72,22 @@ public class TodoService {
         this.repo.updateTodo(todo.getId(), todo);
     }
 
-    public TodoStats calculateTodoStats() {
-        List<Todo> completedTodos = getCompletedTodos();
+    public TodoStats<String> calculateTodoStats() {
+        TodoStats<Long> numericStats = this.repo.calculateTodoStats();
 
-        long globalTotal = 0;
-        long lowTotal = 0;
-        long mediumTotal = 0;
-        long highTotal = 0;
-
-        int lowCount = 0;
-        int mediumCount = 0;
-        int highCount = 0;
-
-        for (Todo todo : completedTodos) {
-            long difference = todo.getCreatedAt().until(todo.getCompletedAt(), ChronoUnit.SECONDS);
-            globalTotal += difference;
-
-            switch (todo.getPriority()) {
-                case TodoPriority.LOW:
-                    lowTotal += difference;
-                    lowCount++;
-                    break;
-                case TodoPriority.MEDIUM:
-                    mediumTotal += difference;
-                    mediumCount++;
-                    break;
-                case TodoPriority.HIGH:
-                    highTotal += difference;
-                    highCount++;
-                    break;
-            }
-        }
-
-        TodoStats stats = new TodoStats();
-
-        if (!completedTodos.isEmpty()) {
-            stats.setGlobalAverage(buildTimeString(globalTotal / completedTodos.size()));
-        }
-        if (lowCount > 0) {
-            stats.setLowAverage(buildTimeString(lowTotal / lowCount));
-        }
-        if (mediumCount > 0) {
-            stats.setMediumAverage(buildTimeString(mediumTotal / mediumCount));
-        }
-        if (highCount > 0) {
-            stats.setHighAverage(buildTimeString(highTotal / highCount));
-        }
-
-        return stats;
+        return new TodoStatsImpl<>(
+                buildTimeString(numericStats.getGlobalAverage()),
+                buildTimeString(numericStats.getLowAverage()),
+                buildTimeString(numericStats.getMediumAverage()),
+                buildTimeString(numericStats.getHighAverage())
+        );
     }
 
-    List<Todo> getCompletedTodos() {
-        List<Todo> todos = this.repo.findTodos();
-        List<Todo> completedTodos = todos.stream().filter(Todo::isDone).toList();
-        return completedTodos;
-    }
+    private String buildTimeString(Long totalSeconds) {
+        if (totalSeconds == null) {
+            return null;
+        }
 
-    private String buildTimeString(long totalSeconds) {
         long hours = totalSeconds / (60 * 60);
         long minutes = (totalSeconds % (60 * 60)) / 60;
         long seconds = totalSeconds % 60;

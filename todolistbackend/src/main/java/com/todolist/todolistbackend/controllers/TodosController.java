@@ -2,12 +2,11 @@ package com.todolist.todolistbackend.controllers;
 
 import com.todolist.todolistbackend.dto.TodoDto;
 import com.todolist.todolistbackend.dto.TodoStats;
-import com.todolist.todolistbackend.enums.TodoPriority;
+import com.todolist.todolistbackend.dto.TodoStatsImpl;
 import com.todolist.todolistbackend.mapper.TodoMapper;
 import com.todolist.todolistbackend.model.Todo;
 import com.todolist.todolistbackend.services.TodoService;
 import com.todolist.todolistbackend.web.PaginatedData;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -136,7 +135,7 @@ public class TodosController {
     }
 
     @GetMapping("/stats")
-    public TodoStats getTodoStats() {
+    public TodoStats<String> getTodoStats() {
         return todoService.calculateTodoStats();
     }
 
