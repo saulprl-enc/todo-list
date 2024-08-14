@@ -2,16 +2,13 @@ package com.todolist.todolistbackend.services;
 
 import com.todolist.todolistbackend.dto.TodoStats;
 import com.todolist.todolistbackend.dto.TodoStatsImpl;
-import com.todolist.todolistbackend.enums.TodoPriority;
 import com.todolist.todolistbackend.model.Todo;
 import com.todolist.todolistbackend.repositories.TodoRepository;
 import com.todolist.todolistbackend.web.PaginatedData;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 
 @Service

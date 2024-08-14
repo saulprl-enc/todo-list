@@ -14,6 +14,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.text.ParseException;
 import java.util.*;
@@ -41,6 +42,25 @@ public class TodosController {
 
 
         PaginatedData<Todo> paginatedData = todoService.getTodos(page, size, title, sortByPriority, sortByDate, status, priority);
+
+        ServletUriComponentsBuilder builder = ServletUriComponentsBuilder.fromCurrentRequest();
+        builder.replaceQueryParam("size", size);
+        int totalPages = paginatedData.getTotalPages();
+
+        if (page > 0) {
+            builder.replaceQueryParam("page", Math.min(page, totalPages));
+            String uri = builder.build().toUriString();
+
+            paginatedData.setPreviousPage(uri);
+        }
+
+        if (page + 1 < totalPages) {
+            builder.replaceQueryParam("page", page + 2);
+            String uri = builder.build().toUriString();
+
+            paginatedData.setNextPage(uri);
+        }
+
         PaginatedData<TodoDto> dtoPaginatedData = new PaginatedData<>(paginatedData.getCurrentPage(), paginatedData.getTotalPages(), paginatedData.getTotalItems(), paginatedData.getSize(), todoMapper.todosListToDto(paginatedData.getData()), paginatedData.getNextPage(), paginatedData.getPreviousPage());
 
         return dtoPaginatedData;

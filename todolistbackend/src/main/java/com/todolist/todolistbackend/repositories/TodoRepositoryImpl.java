@@ -16,10 +16,10 @@ import java.util.*;
 import java.util.stream.Stream;
 
 @Repository
-public class TodoRepository implements ITodoRepository {
+public class TodoRepositoryImpl implements TodoRepository {
     private final Map<String, Todo> db;
 
-    public TodoRepository() {
+    public TodoRepositoryImpl() {
         this.db = new HashMap<String, Todo>() {{
             put("1", new Todo("1", "Build Spring Boot REST API", TodoPriority.HIGH, LocalDateTime.of(2024, Month.AUGUST, 12, 12, 0), LocalDateTime.now()));
             put("2", new Todo("2", "Build React ToDo List app", TodoPriority.MEDIUM, LocalDateTime.of(2024, Month.AUGUST, 12, 12, 0), LocalDateTime.now()));
@@ -35,6 +35,11 @@ public class TodoRepository implements ITodoRepository {
         }};
     }
 
+    TodoRepositoryImpl(Map<String, Todo> db) {
+        this.db = db;
+    }
+
+    @Override
     public Todo saveTodo(Todo todo) {
         this.db.put(todo.getId(), todo);
 
@@ -46,6 +51,7 @@ public class TodoRepository implements ITodoRepository {
         return this.db.values().stream().toList();
     }
 
+    @Override
     public PaginatedData<Todo> findTodos(int page, int size, String title, String sortByPriority, String sortByDate, String status, String priority) {
         ArrayList<Todo> todosList = new ArrayList<>(getTodoList(title, status, priority));
         sortTodos(todosList, sortByPriority, sortByDate);
@@ -57,23 +63,6 @@ public class TodoRepository implements ITodoRepository {
         List<Todo> paginatedTodos = todosList.stream().skip(offsetStart).limit(size).toList();
 
         PaginatedData<Todo> paginatedResponse = new PaginatedData<>(page + 1, totalPages, totalItems, size, paginatedTodos);
-
-        ServletUriComponentsBuilder builder = ServletUriComponentsBuilder.fromCurrentRequest();
-        builder.replaceQueryParam("size", size);
-
-        if (page > 0) {
-            builder.replaceQueryParam("page", Math.min(page, totalPages));
-            String uri = builder.build().toUriString();
-
-            paginatedResponse.setPreviousPage(uri);
-        }
-
-        if (page + 1 < totalPages) {
-            builder.replaceQueryParam("page", page + 2);
-            String uri = builder.build().toUriString();
-
-            paginatedResponse.setNextPage(uri);
-        }
 
         return paginatedResponse;
     }
@@ -116,20 +105,24 @@ public class TodoRepository implements ITodoRepository {
         return todoStream.toList();
     }
 
+    @Override
     public Todo findTodo(String id) {
         return this.db.get(id);
     }
 
+    @Override
     public Todo updateTodo(String id, Todo todo) {
         this.db.replace(id, todo);
 
         return todo;
     }
 
+    @Override
     public Todo deleteTodo(String id) {
         return this.db.remove(id);
     }
 
+    @Override
     public TodoStats<Long> calculateTodoStats() {
         List<Todo> completedTodos = this.findCompletedTodos();
 
