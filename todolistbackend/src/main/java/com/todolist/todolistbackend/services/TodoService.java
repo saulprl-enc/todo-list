@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -20,7 +21,7 @@ public class TodoService {
         this.repo = repo;
     }
 
-    public Collection<Todo> getTodos() {
+    public List<Todo> getTodos() {
         return this.repo.findTodos();
     }
 
