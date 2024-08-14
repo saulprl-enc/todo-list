@@ -1,53 +1,39 @@
-import { format } from "date-fns";
-
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useTodos } from "@/context/todos-context";
 import {
-  TodoItemWrapper,
   TodoItemActions,
-  TodoItemCheck,
-  TodoItemDeleteButton,
   TodoItemDueDate,
   TodoItemPriority,
   TodoItemTitle,
+  TodoItem,
 } from "../todo-item/todo-item";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { useSearchParams } from "react-router-dom";
 import { FaSort, FaSortDown, FaSortUp } from "react-icons/fa6";
 import { FC } from "react";
-import { UpdateTodo } from "../update-todo/update-todo";
 
-export const TodoTable = () => {
+export const TodoList = () => {
   const {
     data: { data },
   } = useTodos();
 
   return (
     <ScrollArea className="relative h-full w-full rounded-sm border-2 border-primary">
-      <TodoTableHeader />
-      <ul className="flex min-w-full flex-col items-stretch gap-2 p-2">
+      <TodoListHeader />
+      <ul
+        data-testid="todo-list"
+        className="flex min-w-full flex-col items-stretch gap-2 p-2"
+      >
         {data.map((todo) => (
-          <TodoItemWrapper key={todo.id} checked={todo.done}>
-            <TodoItemCheck todoId={todo.id} checked={todo.done} />
-            <TodoItemTitle>{todo.title}</TodoItemTitle>
-            <TodoItemPriority>{todo.priority.toLowerCase()}</TodoItemPriority>
-            <TodoItemDueDate>
-              {todo.due ? format(todo.due, "yyyy/MM/dd") : "-"}
-            </TodoItemDueDate>
-            <div className="flex flex-grow"></div>
-            <TodoItemActions>
-              <UpdateTodo todo={todo} />
-              <TodoItemDeleteButton todoId={todo.id} />
-            </TodoItemActions>
-          </TodoItemWrapper>
+          <TodoItem key={todo.id} todo={todo} />
         ))}
       </ul>
     </ScrollArea>
   );
 };
 
-const TodoTableHeader = () => {
+const TodoListHeader = () => {
   return (
     <div className="sticky left-0 top-0 flex w-full items-center gap-2 border-b border-b-slate-400 bg-secondary p-4 font-bold">
       <Checkbox disabled />
