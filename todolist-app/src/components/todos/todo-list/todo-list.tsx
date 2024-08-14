@@ -19,11 +19,11 @@ export const TodoList = () => {
   } = useTodos();
 
   return (
-    <ScrollArea className="relative h-full w-full rounded-sm border-2 border-primary">
+    <ScrollArea className="relative h-full w-full rounded-sm">
       <TodoListHeader />
       <ul
         data-testid="todo-list"
-        className="flex min-w-full flex-col items-stretch gap-2 p-2"
+        className="bg-csi-purple/20 flex min-w-full flex-col items-stretch gap-2 p-2 px-1"
       >
         {data.map((todo) => (
           <TodoItem key={todo.id} todo={todo} />
@@ -35,14 +35,14 @@ export const TodoList = () => {
 
 const TodoListHeader = () => {
   return (
-    <div className="sticky left-0 top-0 flex w-full items-center gap-2 border-b border-b-slate-400 bg-secondary p-4 font-bold">
-      <Checkbox disabled />
+    <div className="bg-csi-purple sticky left-0 top-0 flex w-full items-center gap-2 border-b border-b-slate-400 p-4 font-bold text-white">
+      <Checkbox disabled className="border-white" />
       <TodoItemTitle>Title</TodoItemTitle>
-      <TodoItemPriority className="items-center">
+      <TodoItemPriority className="items-center gap-2">
         Priority
         <TodoSortButton paramName="sortByPriority" />
       </TodoItemPriority>
-      <TodoItemDueDate className="items-center">
+      <TodoItemDueDate className="items-center gap-2">
         Due date
         <TodoSortButton paramName="sortByDate" />
       </TodoItemDueDate>
@@ -91,7 +91,7 @@ const TodoSortButton: FC<TodoSortButtonProps> = ({ paramName }) => {
     <Button
       variant="ghost"
       onClick={toggleSort}
-      className="justify-start gap-1 text-base font-bold"
+      className="justify-start gap-1 px-1 text-base font-bold"
     >
       <Icon />
     </Button>

@@ -51,7 +51,7 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        csiPurple: {
+        "csi-purple": {
           DEFAULT: "hsl(var(--purple))",
         },
         warning: {

@@ -8,7 +8,7 @@ import { TodosProvider } from "./context/todos-context";
 function App() {
   return (
     <TodosProvider>
-      <div className="h-screen w-screen bg-muted p-2">
+      <div className="bg-csi-purple h-screen w-screen p-2">
         <main className="flex size-full flex-col gap-2 rounded-md bg-white p-2">
           <TodoFilters />
           <CreateTodoButton />
