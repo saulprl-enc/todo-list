@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useTodos } from "@/context/todos-context";
 import {
-  TodoItem,
+  TodoItemWrapper,
   TodoItemActions,
   TodoItemCheck,
   TodoItemDeleteButton,
@@ -28,7 +28,7 @@ export const TodoTable = () => {
       <TodoTableHeader />
       <ul className="flex min-w-full flex-col items-stretch gap-2 p-2">
         {data.map((todo) => (
-          <TodoItem key={todo.id} checked={todo.done}>
+          <TodoItemWrapper key={todo.id} checked={todo.done}>
             <TodoItemCheck todoId={todo.id} checked={todo.done} />
             <TodoItemTitle>{todo.title}</TodoItemTitle>
             <TodoItemPriority>{todo.priority.toLowerCase()}</TodoItemPriority>
@@ -40,7 +40,7 @@ export const TodoTable = () => {
               <UpdateTodo todo={todo} />
               <TodoItemDeleteButton todoId={todo.id} />
             </TodoItemActions>
-          </TodoItem>
+          </TodoItemWrapper>
         ))}
       </ul>
     </ScrollArea>

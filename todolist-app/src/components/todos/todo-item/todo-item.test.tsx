@@ -1,18 +1,18 @@
-import { describe, expect, it, test, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import {
-  TodoItem,
-  TodoItemActions,
-  TodoItemCheck,
+  TodoItemWrapper,
   TodoItemDueDate,
   TodoItemPriority,
   TodoItemTitle,
+  TodoItem,
 } from "./todo-item";
 import { TodoContextProps, TodosContext } from "@/context/todos-context";
-import { QueryClient, QueryClientProvider, useMutation } from "react-query";
+import { QueryClient, useMutation } from "react-query";
 import { TodoResponse } from "@/models/todo";
-import { ReactNode } from "react";
+import { renderWithClient } from "@/lib/test-utils";
+import { format } from "date-fns";
 
 const todoTitle = "Do the dishes";
 const todoPriority = "MEDIUM";
@@ -30,7 +30,7 @@ const todoResData: TodoResponse = {
       id: "1",
       title: "Do the dishes",
       priority: "MEDIUM",
-      due: null,
+      due: "2024-08-14",
       completedAt: null,
       done: false,
       createdAt: new Date().toString(),
@@ -41,17 +41,13 @@ const todoResData: TodoResponse = {
 describe("TodoItem", async () => {
   const queryClient = new QueryClient();
 
-  const queryClientWrapper = ({ children }: { children: ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
-
   it("should render properly", async () => {
     render(
-      <TodoItem>
+      <TodoItemWrapper>
         <TodoItemTitle>{todoTitle}</TodoItemTitle>
         <TodoItemPriority>{todoPriority}</TodoItemPriority>
         <TodoItemDueDate>{todoDueDate}</TodoItemDueDate>
-      </TodoItem>,
+      </TodoItemWrapper>,
     );
 
     const todoItem = screen.getByRole("listitem");
@@ -62,7 +58,7 @@ describe("TodoItem", async () => {
     expect(screen.getByText(todoDueDate)).toBeDefined();
   });
 
-  it("checkbox should change state when clicked", async () => {
+  it("checkbox should set to true when clicked and call corresponding mutation", async () => {
     const mockMarkAsDone = vi.fn().mockImplementation(() => Promise.resolve());
     const mockUndoTodo = vi.fn().mockImplementation(() => Promise.resolve());
 
@@ -75,21 +71,15 @@ describe("TodoItem", async () => {
 
       return (
         <TodosContext.Provider value={contextValue}>
-          <TodoItem>
-            <TodoItemCheck todoId="1" />
-            <TodoItemTitle>{todoTitle}</TodoItemTitle>
-            <TodoItemPriority>{todoPriority}</TodoItemPriority>
-            <TodoItemDueDate>{todoDueDate}</TodoItemDueDate>
-          </TodoItem>
+          <TodoItem todo={contextValue.data.data[0]} />
         </TodosContext.Provider>
       );
     }
 
-    render(<TodoItemTest />, { wrapper: queryClientWrapper });
+    renderWithClient(queryClient, <TodoItemTest />);
 
-    const todoItemCheck = screen.getByRole("checkbox");
+    const todoItemCheck = screen.getByTestId("todo-checkbox");
 
-    expect(todoItemCheck).toBeDefined();
     expect(todoItemCheck.getAttribute("aria-checked")).toBe("false");
 
     await userEvent.click(todoItemCheck);
@@ -97,9 +87,119 @@ describe("TodoItem", async () => {
     expect(mockMarkAsDone).toHaveBeenCalled();
     expect(mockUndoTodo).not.toHaveBeenCalled();
     expect(todoItemCheck.getAttribute("aria-checked")).toBe("true");
+  });
+
+  it("checkbox should set to false when clicked and call corresponding mutation", async () => {
+    const mockMarkAsDone = vi.fn().mockImplementation(() => Promise.resolve());
+    const mockUndoTodo = vi.fn().mockImplementation(() => Promise.resolve());
+
+    function TodoItemTest() {
+      const contextValue: TodoContextProps = {
+        data: { ...todoResData },
+        markAsDone: useMutation((_: string) => mockMarkAsDone()),
+        undoTodo: useMutation((_: string) => mockUndoTodo()),
+      };
+
+      return (
+        <TodosContext.Provider value={contextValue}>
+          <TodoItem todo={{ ...contextValue.data.data[0], done: true }} />
+        </TodosContext.Provider>
+      );
+    }
+
+    renderWithClient(queryClient, <TodoItemTest />);
+
+    const todoItemCheck = screen.getByTestId("todo-checkbox");
+
+    expect(todoItemCheck.getAttribute("aria-checked")).toBe("true");
 
     await userEvent.click(todoItemCheck);
 
     expect(mockUndoTodo).toHaveBeenCalled();
+    expect(mockMarkAsDone).not.toHaveBeenCalled();
+    expect(todoItemCheck.getAttribute("aria-checked")).toBe("false");
+  });
+
+  it("checkbox should reset state when mutation is rejected", async () => {
+    const mockMarkAsDone = vi.fn().mockImplementation(() => Promise.reject());
+    const mockUndoTodo = vi.fn().mockImplementation(() => Promise.reject());
+
+    function TodoItemTest() {
+      const contextValue: TodoContextProps = {
+        data: { ...todoResData },
+        markAsDone: useMutation((_: string) => mockMarkAsDone()),
+        undoTodo: useMutation((_: string) => mockUndoTodo()),
+      };
+
+      return (
+        <TodosContext.Provider value={contextValue}>
+          <TodoItem todo={contextValue.data.data[0]} />
+        </TodosContext.Provider>
+      );
+    }
+
+    renderWithClient(queryClient, <TodoItemTest />);
+
+    const todoItemCheck = screen.getByTestId("todo-checkbox");
+
+    expect(todoItemCheck.getAttribute("aria-checked")).toBe("false");
+
+    await userEvent.click(todoItemCheck);
+
+    expect(mockMarkAsDone).toHaveBeenCalled();
+    expect(mockUndoTodo).not.toHaveBeenCalled();
+    expect(todoItemCheck.getAttribute("aria-checked")).toBe("false");
+  });
+
+  it("date should have the correct format", async () => {
+    const mockMarkAsDone = vi.fn().mockImplementation(() => Promise.reject());
+    const mockUndoTodo = vi.fn().mockImplementation(() => Promise.reject());
+
+    function TodoItemTest() {
+      const contextValue: TodoContextProps = {
+        data: { ...todoResData },
+        markAsDone: useMutation((_: string) => mockMarkAsDone()),
+        undoTodo: useMutation((_: string) => mockUndoTodo()),
+      };
+
+      return (
+        <TodosContext.Provider value={contextValue}>
+          <TodoItem todo={contextValue.data.data[0]} />
+        </TodosContext.Provider>
+      );
+    }
+
+    renderWithClient(queryClient, <TodoItemTest />);
+
+    const todoItemDate = screen.getByTestId("todo-due");
+
+    expect(todoItemDate.textContent).toBe(
+      format(todoResData.data[0].due!, "yyyy/MM/dd"),
+    );
+  });
+
+  it("date should be a hyphen when null", async () => {
+    const mockMarkAsDone = vi.fn().mockImplementation(() => Promise.reject());
+    const mockUndoTodo = vi.fn().mockImplementation(() => Promise.reject());
+
+    function TodoItemTest() {
+      const contextValue: TodoContextProps = {
+        data: { ...todoResData },
+        markAsDone: useMutation((_: string) => mockMarkAsDone()),
+        undoTodo: useMutation((_: string) => mockUndoTodo()),
+      };
+
+      return (
+        <TodosContext.Provider value={contextValue}>
+          <TodoItem todo={{ ...contextValue.data.data[0], due: null }} />
+        </TodosContext.Provider>
+      );
+    }
+
+    renderWithClient(queryClient, <TodoItemTest />);
+
+    const todoItemDate = screen.getByTestId("todo-due");
+
+    expect(todoItemDate.textContent).toBe("-");
   });
 });
