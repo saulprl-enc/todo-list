@@ -13,7 +13,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 @Repository
-public class TodoRepository {
+public class TodoRepository implements ITodoRepository {
     private final Map<String, Todo> db;
 
     public TodoRepository() {
@@ -38,12 +38,13 @@ public class TodoRepository {
         return todo;
     }
 
-    public ArrayList<Todo> findTodos() {
-        return new ArrayList<>(this.db.values().stream().toList());
+    @Override
+    public List<Todo> findTodos() {
+        return this.db.values().stream().toList();
     }
 
     public PaginatedData<Todo> findTodos(int page, int size, String title, String sortByPriority, String sortByDate, String status, String priority) {
-        ArrayList<Todo> todosList = getTodoList(title, status, priority);
+        ArrayList<Todo> todosList = new ArrayList<>(getTodoList(title, status, priority));
         sortTodos(todosList, sortByPriority, sortByDate);
 
         int totalItems = todosList.size();
@@ -74,7 +75,7 @@ public class TodoRepository {
         return paginatedResponse;
     }
 
-    private ArrayList<Todo> getTodoList(String title, String status, String priority) {
+    List<Todo> getTodoList(String title, String status, String priority) {
         Stream<Todo> todoStream = this.db.values().stream();
 
         if (title != null && !title.isEmpty()) {
@@ -109,7 +110,7 @@ public class TodoRepository {
             }
         }
 
-        return new ArrayList<>(todoStream.toList());
+        return todoStream.toList();
     }
 
     public Todo findTodo(String id) {
@@ -126,7 +127,7 @@ public class TodoRepository {
         return this.db.remove(id);
     }
 
-    private void sortTodos(ArrayList<Todo> todos, @Nullable String sortByPriority, @Nullable String sortByDueDate) {
+    void sortTodos(ArrayList<Todo> todos, @Nullable String sortByPriority, @Nullable String sortByDueDate) {
         Comparator<Todo> priorityComparator = Comparator.comparingInt(Todo::getPriorityOrdinal);
         Comparator<Todo> dueDateComparator = Comparator.comparing(Todo::getDue, Comparator.nullsFirst(Comparator.naturalOrder()));
         Comparator<Todo> createdAtComparator = Comparator.comparing(Todo::getCreatedAt).reversed();
@@ -147,7 +148,7 @@ public class TodoRepository {
         todos.sort(comparator);
     }
 
-    private Comparator<Todo> buildConditionalComparator(String filter, Comparator<Todo> comparator) {
+    Comparator<Todo> buildConditionalComparator(String filter, Comparator<Todo> comparator) {
         if (filter.equals("asc")) {
             return comparator;
         }

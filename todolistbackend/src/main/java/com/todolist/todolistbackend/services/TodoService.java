@@ -3,14 +3,13 @@ package com.todolist.todolistbackend.services;
 import com.todolist.todolistbackend.dto.TodoStats;
 import com.todolist.todolistbackend.enums.TodoPriority;
 import com.todolist.todolistbackend.model.Todo;
+import com.todolist.todolistbackend.repositories.ITodoRepository;
 import com.todolist.todolistbackend.repositories.TodoRepository;
 import com.todolist.todolistbackend.web.PaginatedData;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -18,8 +17,11 @@ import java.util.UUID;
 @Service
 public class TodoService {
 
-    @Autowired
     private TodoRepository repo;
+
+    public TodoService(TodoRepository repo) {
+        this.repo = repo;
+    }
 
     public Collection<Todo> getTodos() {
         return this.repo.findTodos();
@@ -71,9 +73,7 @@ public class TodoService {
     }
 
     public TodoStats calculateTodoStats() {
-        ArrayList<Todo> todos = this.repo.findTodos();
-        List<Todo> completedTodos = todos.stream().filter(Todo::isDone).toList();
-
+        List<Todo> completedTodos = getCompletedTodos();
 
         long globalTotal = 0;
         long lowTotal = 0;
@@ -120,6 +120,12 @@ public class TodoService {
         }
 
         return stats;
+    }
+
+    List<Todo> getCompletedTodos() {
+        List<Todo> todos = this.repo.findTodos();
+        List<Todo> completedTodos = todos.stream().filter(Todo::isDone).toList();
+        return completedTodos;
     }
 
     private String buildTimeString(long totalSeconds) {
