@@ -2,7 +2,7 @@ import { CreateTodoButton } from "./components/todos/create-todo/create-todo-but
 import { TodoFilters } from "./components/todos/todo-filters/todo-filters";
 import { TodoPagination } from "./components/todos/todo-pagination/todo-pagination";
 import { TodoStats } from "./components/todos/todo-stats/todo-stats";
-import { TodoList } from "./components/todos/todo-table/todo-table";
+import { TodoList } from "./components/todos/todo-list/todo-list";
 import { TodosProvider } from "./context/todos-context";
 
 function App() {

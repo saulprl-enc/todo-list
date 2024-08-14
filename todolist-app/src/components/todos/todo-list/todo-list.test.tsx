@@ -8,7 +8,7 @@ import { TodoResponse } from "@/models/todo";
 import { QueryClient, useMutation } from "react-query";
 import { describe, expect, it } from "vitest";
 import { screen } from "@testing-library/react";
-import { TodoList } from "./todo-table";
+import { TodoList } from "./todo-list";
 import { MemoryRouter } from "react-router-dom";
 
 const todoResData: TodoResponse = {
